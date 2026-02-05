@@ -1,11 +1,13 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button, Card } from '@/shared/components/ui'
 import { useConsent } from '../hooks/useConsent'
 
 export function ConsentForm() {
   const router = useRouter()
+  const t = useTranslations('consent')
   const { grantConsent, declineConsent } = useConsent()
 
   const handleAccept = () => {
@@ -21,17 +23,14 @@ export function ConsentForm() {
 
   return (
     <Card className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Data Collection</h1>
-      <p className="text-gray-600 mb-6">
-        We collect anonymous usage data to improve our service. This helps us
-        understand how the app is used and make it better for everyone.
-      </p>
+      <h1 className="text-2xl font-bold mb-4">{t('title')}</h1>
+      <p className="text-gray-600 mb-6">{t('description')}</p>
       <div className="flex flex-col gap-3">
         <Button onClick={handleAccept} size="lg">
-          I Agree
+          {t('accept')}
         </Button>
         <Button onClick={handleDecline} variant="secondary" size="lg">
-          Decline
+          {t('decline')}
         </Button>
       </div>
     </Card>

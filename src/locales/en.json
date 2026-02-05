@@ -17,7 +17,8 @@
   },
   "settings": {
     "language": "Language",
-    "contact": "Developer Contact"
+    "contact": "Developer Contact",
+    "noContact": "No contact information available"
   },
   "notInstalled": {
     "title": "World App Required",

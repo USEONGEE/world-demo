@@ -1,9 +1,13 @@
 'use client'
 
-import { ReactNode } from 'react'
-import { MiniKitClientProvider } from '@/core/minikit'
+import { ReactNode, useEffect, useRef } from 'react'
+import { MiniKitClientProvider, useLaunchLocation } from '@/core/minikit'
 import { I18nProvider } from '@/core/i18n'
+import { analytics } from '@/core/analytics'
+import { useConsentStore } from '@/domains/consent'
 import { useSettingsStore } from '@/domains/settings'
+import { ErrorBoundary, OfflineScreen } from '@/shared/components/states'
+import { useOffline } from '@/shared/hooks'
 
 import en from '@/locales/en.json'
 import es from '@/locales/es.json'
@@ -16,12 +20,35 @@ const messages = { en, es, th, ja, ko, pt } as const
 
 export function RootProviders({ children }: { children: ReactNode }) {
   const language = useSettingsStore((s) => s.language)
+  const consent = useConsentStore((s) => s.consent)
+  const isHydrated = useConsentStore((s) => s.isHydrated)
+  const launchLocation = useLaunchLocation()
+  const isOffline = useOffline()
+  const hasTrackedAppOpen = useRef(false)
   const currentMessages = messages[language] || en
+
+  useEffect(() => {
+    if (!isHydrated || hasTrackedAppOpen.current) return
+
+    analytics.track({
+      name: 'app_open',
+      properties: {
+        launchLocation,
+        language,
+        isReturningUser: consent !== null,
+      },
+      timestamp: new Date(),
+    })
+
+    hasTrackedAppOpen.current = true
+  }, [consent, isHydrated, language, launchLocation])
 
   return (
     <MiniKitClientProvider>
       <I18nProvider locale={language} messages={currentMessages}>
-        {children}
+        <ErrorBoundary>
+          {isOffline ? <OfflineScreen /> : children}
+        </ErrorBoundary>
       </I18nProvider>
     </MiniKitClientProvider>
   )

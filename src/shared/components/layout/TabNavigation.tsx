@@ -2,15 +2,41 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useMemo, useRef } from 'react'
+import { useTranslations } from 'next-intl'
+import { analytics } from '@/core/analytics'
 import { cn } from '@/shared/utils'
 
-const tabs = [
-  { href: '/home', label: 'Home', icon: '🏠' },
-  { href: '/settings', label: 'Settings', icon: '⚙️' },
-]
-
 export function TabNavigation() {
+  const t = useTranslations('tabs')
   const pathname = usePathname()
+  const previousPath = useRef<string | null>(null)
+
+  const tabs = useMemo(
+    () => [
+      { href: '/home', label: t('home'), icon: '🏠' },
+      { href: '/settings', label: t('settings'), icon: '⚙️' },
+    ],
+    [t]
+  )
+
+  useEffect(() => {
+    const currentTab = tabs.find((tab) => tab.href === pathname)
+    if (!currentTab) return
+
+    if (previousPath.current && previousPath.current !== pathname) {
+      const fromTab = tabs.find((tab) => tab.href === previousPath.current)
+      if (fromTab) {
+        analytics.track({
+          name: 'tab_switched',
+          properties: { from: fromTab.href, to: currentTab.href },
+          timestamp: new Date(),
+        })
+      }
+    }
+
+    previousPath.current = pathname
+  }, [pathname, tabs])
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe">

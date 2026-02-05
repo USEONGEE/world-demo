@@ -17,7 +17,8 @@
   },
   "settings": {
     "language": "言語",
-    "contact": "開発者連絡先"
+    "contact": "開発者連絡先",
+    "noContact": "連絡先情報がありません"
   },
   "notInstalled": {
     "title": "World Appが必要です",

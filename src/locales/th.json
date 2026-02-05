@@ -17,7 +17,8 @@
   },
   "settings": {
     "language": "ภาษา",
-    "contact": "ติดต่อนักพัฒนา"
+    "contact": "ติดต่อนักพัฒนา",
+    "noContact": "ไม่มีข้อมูลการติดต่อ"
   },
   "notInstalled": {
     "title": "ต้องการ World App",

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Card } from '@/shared/components/ui'
 import { locales, type Locale } from '@/core/i18n'
 import { useLanguage } from '../hooks/useLanguage'
@@ -15,10 +16,11 @@ const languageNames: Record<Locale, string> = {
 
 export function LanguageSelector() {
   const { language, setLanguage } = useLanguage()
+  const t = useTranslations('settings')
 
   return (
     <Card>
-      <h3 className="font-semibold mb-4">Language</h3>
+      <h3 className="font-semibold mb-4">{t('language')}</h3>
       <div className="grid grid-cols-2 gap-2">
         {locales.map((locale) => (
           <button
