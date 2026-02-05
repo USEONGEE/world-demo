@@ -7,6 +7,7 @@
 
 ## 금지
 - "official" 표현, World 로고 사용, 운 기반 게임, 토큰 pre-sale
+- **git push 임의 실행 금지** - 반드시 사용자 승인 후 push
 
 ## 개발 환경 테스트
 
@@ -36,3 +37,9 @@ Preview URL을 Developer Portal에 등록
 
 ### 로컬 브라우저 테스트 (AppGuard 비활성화)
 `src/app/(tabs)/layout.tsx`에서 `<AppGuard>` 주석 처리 후 브라우저에서 직접 테스트 가능
+
+## 문서 현황
+
+- `docs/guide/` 문서들은 임시로 생성하지 않음 (changelog.md만 존재)
+- Phase 문서: `docs/phases/vX.Y.Z-feature-name/`
+- 완료된 Phase: `docs/archive/vX.Y.Z-feature-name/`
