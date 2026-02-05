@@ -32,5 +32,17 @@
   "home": {
     "welcome": "Bem-vindo ao World Gate",
     "description": "Verificação humana e gerenciamento de carteira"
+  },
+  "verify": {
+    "button": "Verificar como humano",
+    "verifying": "Verificando...",
+    "description": "Prove que você é um humano único com World ID",
+    "verified": "Humano verificado",
+    "human_id_prefix": "ID",
+    "duplicate": "Já verificado",
+    "duplicate_message": "Este World ID já foi utilizado",
+    "error": "Verificação falhou",
+    "retry": "Tentar novamente",
+    "minikit_required": "Por favor abra este app no World App"
   }
 }

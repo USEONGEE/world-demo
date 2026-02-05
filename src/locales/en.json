@@ -32,5 +32,17 @@
   "home": {
     "welcome": "Welcome to World Gate",
     "description": "Human verification and wallet management"
+  },
+  "verify": {
+    "button": "Verify as Human",
+    "verifying": "Verifying...",
+    "description": "Prove you're a unique human with World ID",
+    "verified": "Verified Human",
+    "human_id_prefix": "ID",
+    "duplicate": "Already Verified",
+    "duplicate_message": "This World ID has already been used",
+    "error": "Verification Failed",
+    "retry": "Try Again",
+    "minikit_required": "Please open this app in World App"
   }
 }

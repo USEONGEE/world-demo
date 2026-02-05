@@ -32,5 +32,17 @@
   "home": {
     "welcome": "Bienvenido a World Gate",
     "description": "Verificación humana y gestión de billetera"
+  },
+  "verify": {
+    "button": "Verificar como humano",
+    "verifying": "Verificando...",
+    "description": "Demuestra que eres un humano único con World ID",
+    "verified": "Humano verificado",
+    "human_id_prefix": "ID",
+    "duplicate": "Ya verificado",
+    "duplicate_message": "Este World ID ya ha sido utilizado",
+    "error": "Verificación fallida",
+    "retry": "Reintentar",
+    "minikit_required": "Por favor abre esta app en World App"
   }
 }

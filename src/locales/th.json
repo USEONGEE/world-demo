@@ -32,5 +32,17 @@
   "home": {
     "welcome": "ยินดีต้อนรับสู่ World Gate",
     "description": "การยืนยันตัวตนและจัดการกระเป๋าเงิน"
+  },
+  "verify": {
+    "button": "ยืนยันตัวตนเป็นมนุษย์",
+    "verifying": "กำลังยืนยัน...",
+    "description": "พิสูจน์ว่าคุณเป็นมนุษย์ที่ไม่ซ้ำกันด้วย World ID",
+    "verified": "ยืนยันแล้ว",
+    "human_id_prefix": "ID",
+    "duplicate": "ยืนยันแล้ว",
+    "duplicate_message": "World ID นี้ถูกใช้งานแล้ว",
+    "error": "การยืนยันล้มเหลว",
+    "retry": "ลองอีกครั้ง",
+    "minikit_required": "กรุณาเปิดแอปนี้ใน World App"
   }
 }

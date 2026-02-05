@@ -32,5 +32,17 @@
   "home": {
     "welcome": "ワールドゲートへようこそ",
     "description": "人間認証とウォレット管理"
+  },
+  "verify": {
+    "button": "人間として認証",
+    "verifying": "認証中...",
+    "description": "World IDでユニークな人間であることを証明",
+    "verified": "認証済み",
+    "human_id_prefix": "ID",
+    "duplicate": "認証済み",
+    "duplicate_message": "このWorld IDは既に使用されています",
+    "error": "認証失敗",
+    "retry": "再試行",
+    "minikit_required": "World Appでこのアプリを開いてください"
   }
 }

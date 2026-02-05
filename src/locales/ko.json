@@ -32,5 +32,17 @@
   "home": {
     "welcome": "월드 게이트에 오신 것을 환영합니다",
     "description": "인간 검증 및 지갑 관리"
+  },
+  "verify": {
+    "button": "사람 인증하기",
+    "verifying": "인증 중...",
+    "description": "World ID로 고유한 사람임을 증명하세요",
+    "verified": "인증된 사람",
+    "human_id_prefix": "ID",
+    "duplicate": "이미 인증됨",
+    "duplicate_message": "이 World ID는 이미 사용되었습니다",
+    "error": "인증 실패",
+    "retry": "다시 시도",
+    "minikit_required": "World App에서 이 앱을 열어주세요"
   }
 }
