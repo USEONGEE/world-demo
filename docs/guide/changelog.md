@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.0.2 - World ID Verify (2026-02-06)
+
+### Features
+- **World ID Human Verification**: World ID proof 검증 및 human_id 발급
+- **JWT Session Management**: jose 기반 세션 토큰 생성/검증
+- **Human Domain**: repo/service/API 완전 구현
+- **Verify UI**: 인증 버튼 컴포넌트 (로딩/성공/실패/중복 상태)
+
+### API Endpoints
+- `POST /api/verify`: World ID proof 검증 및 세션 발급
+- `GET /api/human/me`: 현재 세션의 human_id 조회
+
+### Infrastructure
+- **Supabase Admin Client**: service_role key로 RLS 우회
+- **DB Migration**: `supabase/migrations/0000_create_human.sql`
+- **Zod Validation**: API payload 검증 스키마
+
+### Dependencies
+- `jose`: JWT 생성/검증
+- `zod`: 스키마 검증
+
+📝 [Phase 문서](../archive/v0.0.2-world-id-verify/README.md)
+
+---
+
 ## v0.0.1 - Foundation & Compliance Scaffolding (2026-02-05)
 
 ### Features

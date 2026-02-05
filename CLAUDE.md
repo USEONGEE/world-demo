@@ -38,6 +38,19 @@ Preview URL을 Developer Portal에 등록
 ### 로컬 브라우저 테스트 (AppGuard 비활성화)
 `src/app/(tabs)/layout.tsx`에서 `<AppGuard>` 주석 처리 후 브라우저에서 직접 테스트 가능
 
+## DB 마이그레이션
+
+- 위치: `supabase/migrations/`
+- 버전 규칙: `0000_`, `0001_`, `0002_` 순차 번호
+- 실행: `supabase db push` 또는 Supabase Dashboard에서 직접 실행
+
+## 완료된 기능
+
+| 버전 | 기능 | 완료일 | 문서 |
+|------|------|--------|------|
+| v0.0.2 | World ID Verify | 2026-02-06 | [archive](docs/archive/v0.0.2-world-id-verify/) |
+| v0.0.1 | Foundation & Scaffolding | 2026-02-05 | [archive](docs/archive/v0.0.1-foundation-scaffolding/) |
+
 ## 문서 현황
 
 - `docs/guide/` 문서들은 임시로 생성하지 않음 (changelog.md만 존재)
