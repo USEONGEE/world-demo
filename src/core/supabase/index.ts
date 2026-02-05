@@ -1,3 +1,3 @@
 export { supabase } from './client'
-export { createSupabaseServerClient } from './server'
-export type { Database } from './types'
+export { createSupabaseServerClient, createSupabaseAdminClient } from './server'
+export type { Database, Human, HumanInsert } from './types'
