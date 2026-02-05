@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "월드 게이트",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도"
+  },
+  "tabs": {
+    "home": "홈",
+    "settings": "설정"
+  },
+  "consent": {
+    "title": "데이터 수집",
+    "description": "서비스 개선을 위해 익명의 사용 데이터를 수집합니다.",
+    "accept": "동의합니다",
+    "decline": "거부"
+  },
+  "settings": {
+    "language": "언어",
+    "contact": "개발자 연락처"
+  },
+  "notInstalled": {
+    "title": "World App 필요",
+    "description": "이 앱은 World App이 필요합니다.",
+    "download": "World App 다운로드"
+  },
+  "offline": {
+    "title": "연결 없음",
+    "description": "인터넷 연결을 확인해 주세요."
+  },
+  "home": {
+    "welcome": "월드 게이트에 오신 것을 환영합니다",
+    "description": "인간 검증 및 지갑 관리"
+  }
+}

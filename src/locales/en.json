@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "World Gate",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry"
+  },
+  "tabs": {
+    "home": "Home",
+    "settings": "Settings"
+  },
+  "consent": {
+    "title": "Data Collection",
+    "description": "We collect anonymous usage data to improve our service.",
+    "accept": "I Agree",
+    "decline": "Decline"
+  },
+  "settings": {
+    "language": "Language",
+    "contact": "Developer Contact"
+  },
+  "notInstalled": {
+    "title": "World App Required",
+    "description": "This app requires World App to function.",
+    "download": "Download World App"
+  },
+  "offline": {
+    "title": "No Connection",
+    "description": "Please check your internet connection."
+  },
+  "home": {
+    "welcome": "Welcome to World Gate",
+    "description": "Human verification and wallet management"
+  }
+}

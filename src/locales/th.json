@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "World Gate",
+    "loading": "กำลังโหลด...",
+    "error": "เกิดข้อผิดพลาด",
+    "retry": "ลองอีกครั้ง"
+  },
+  "tabs": {
+    "home": "หน้าแรก",
+    "settings": "การตั้งค่า"
+  },
+  "consent": {
+    "title": "การเก็บข้อมูล",
+    "description": "เราเก็บข้อมูลการใช้งานแบบไม่ระบุตัวตนเพื่อปรับปรุงบริการ",
+    "accept": "ยอมรับ",
+    "decline": "ปฏิเสธ"
+  },
+  "settings": {
+    "language": "ภาษา",
+    "contact": "ติดต่อนักพัฒนา"
+  },
+  "notInstalled": {
+    "title": "ต้องการ World App",
+    "description": "แอปนี้ต้องการ World App เพื่อใช้งาน",
+    "download": "ดาวน์โหลด World App"
+  },
+  "offline": {
+    "title": "ไม่มีการเชื่อมต่อ",
+    "description": "กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต"
+  },
+  "home": {
+    "welcome": "ยินดีต้อนรับสู่ World Gate",
+    "description": "การยืนยันตัวตนและจัดการกระเป๋าเงิน"
+  }
+}

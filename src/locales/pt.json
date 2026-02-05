@@ -1,0 +1,35 @@
+{
+  "common": {
+    "appName": "World Gate",
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "retry": "Tentar novamente"
+  },
+  "tabs": {
+    "home": "Início",
+    "settings": "Configurações"
+  },
+  "consent": {
+    "title": "Coleta de dados",
+    "description": "Coletamos dados de uso anônimos para melhorar nosso serviço.",
+    "accept": "Concordo",
+    "decline": "Recusar"
+  },
+  "settings": {
+    "language": "Idioma",
+    "contact": "Contato do desenvolvedor"
+  },
+  "notInstalled": {
+    "title": "World App necessário",
+    "description": "Este aplicativo requer o World App para funcionar.",
+    "download": "Baixar World App"
+  },
+  "offline": {
+    "title": "Sem conexão",
+    "description": "Por favor, verifique sua conexão com a internet."
+  },
+  "home": {
+    "welcome": "Bem-vindo ao World Gate",
+    "description": "Verificação humana e gerenciamento de carteira"
+  }
+}
