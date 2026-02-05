@@ -1,0 +1,51 @@
+# Environment Variables (통합 문서)
+
+## 공개 변수 (NEXT_PUBLIC_*)
+- `NEXT_PUBLIC_WLD_APP_ID`: World App ID (FE에서 필요)
+- `NEXT_PUBLIC_SUPABASE_URL`: Supabase URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anon key
+- `NEXT_PUBLIC_APP_NAME`: 앱 표시 이름
+- `NEXT_PUBLIC_APP_VERSION`: 앱 버전
+- `NEXT_PUBLIC_ENABLE_WORLD_ID`: World ID 기능 플래그
+- `NEXT_PUBLIC_ENABLE_WALLET_BINDING`: 지갑 바인딩 기능 플래그
+- `NEXT_PUBLIC_DEVELOPER_EMAIL`: 개발자 연락처 이메일
+- `NEXT_PUBLIC_SUPPORT_URL`: 지원 페이지 URL
+- `NEXT_PUBLIC_DEFAULT_TIMEZONE`: next-intl 기본 타임존 (예: UTC)
+
+## 서버 전용 변수
+- `WLD_APP_ID`: World ID 서버 검증용 App ID
+- `SUPABASE_SERVICE_ROLE_KEY`: 서버 전용 Supabase Key
+
+## 세션 관련 변수 (P0)
+- `SESSION_SECRET`: 세션 서명 비밀키 (필수)
+- `SESSION_COOKIE_NAME`: 기본값 `wg_session`
+- `SESSION_TTL_SECONDS`: 기본값 604800 (7일)
+- `SESSION_EXPIRES_IN`: 기본값 `7d` (TTL 미설정 시 fallback)
+
+## 권장 예시 (.env.local)
+```
+NEXT_PUBLIC_WLD_APP_ID=app_xxx
+WLD_APP_ID=app_xxx
+
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+SUPABASE_SERVICE_ROLE_KEY=xxx
+
+NEXT_PUBLIC_APP_NAME=World Gate
+NEXT_PUBLIC_APP_VERSION=0.0.1
+NEXT_PUBLIC_ENABLE_WORLD_ID=true
+NEXT_PUBLIC_ENABLE_WALLET_BINDING=true
+NEXT_PUBLIC_DEFAULT_TIMEZONE=UTC
+
+NEXT_PUBLIC_DEVELOPER_EMAIL=developer@example.com
+NEXT_PUBLIC_SUPPORT_URL=https://support.example.com
+
+SESSION_SECRET=change-this
+SESSION_COOKIE_NAME=wg_session
+SESSION_TTL_SECONDS=604800
+SESSION_EXPIRES_IN=7d
+```
+
+## 주의
+- `NEXT_PUBLIC_*`은 클라이언트에 노출됨
+- `SESSION_SECRET` 및 `SUPABASE_SERVICE_ROLE_KEY`는 서버 전용
