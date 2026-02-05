@@ -32,6 +32,31 @@
   - 세션 기반 human_id 필수
   - 응답: [{ address, chain, verified_at, verification_method }]
 
+## FE/BE 경계 (필수)
+- FE: 지갑 목록 조회 호출 + 표시 UI만 담당
+- BE: 세션 검증 + 지갑 조회 + 응답 스키마 보장 전담
+- `app/api/wallets`는 컨트롤러 역할만 수행 (도메인 호출)
+
+#### 응답 스키마 (P1)
+**200 OK**
+```json
+{
+  "wallets": [
+    {
+      "address": "0xabc...123",
+      "chain": "evm",
+      "verified_at": "2026-02-05T12:34:56Z",
+      "verification_method": "SIWE"
+    }
+  ]
+}
+```
+
+**401 Unauthorized**
+```json
+{ "error": { "code": "UNAUTHORIZED", "message": "Session required" } }
+```
+
 ## 비기능/UX
 - 탭 내비게이션 유지
 - 좌우 패딩 24px, 섹션 간격 32px
@@ -133,4 +158,6 @@ import { Button, Card, TabBar } from '@worldcoin/mini-apps-ui-kit-react'
 
 ### 참조 문서
 - `/docs/World-Chain-Guide.md` - UI/UX 가이드라인
+- `/docs/phases/ENV.md` - 환경변수 통합 문서
+- `/docs/phases/ARCHITECTURE.md` - FE/BE 경계 및 구조
 - `@worldcoin/mini-apps-ui-kit-react` - 공식 UI Kit

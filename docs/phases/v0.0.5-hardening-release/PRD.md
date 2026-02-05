@@ -19,12 +19,14 @@
 - Rate limit 또는 간단한 abuse 방지 로직
 - 에러 코드/메시지 일관화
 - 데이터 보존 정책 문서화(PII 미저장 명시)
+- DB 마이그레이션 문서 최신화(`/docs/phases/DB-MIGRATIONS.md`)
 
 ## 보안/정책
 - World 로고 사용 금지
 - 특정 기관의 승인·제휴·인증을 암시하는 문구 금지
 - proof/서명 원문 저장 금지
 - 모든 검증은 BE에서 수행
+- FE/BE 경계 준수 (검증/DB는 BE 전담)
 
 ## 성능/안정성
 - 초기 로딩 2–3초 내, 후속 액션 < 1초
@@ -34,7 +36,6 @@
 ## 분석 이벤트
 - signup (method)
 - first_value (action_type)
-- invite_sent / invite_accepted (미사용 시 비활성)
 - notification_open (설정 시)
 
 ## 테스트
@@ -42,6 +43,7 @@
 - 통합: Verify → Wallet Bind → Wallet List E2E
 - 다국어 스냅샷(6개 언어)
 - 보안: nonce 재사용, 만료, 세션 위변조
+- **커버리지 기준:** BE 유닛 테스트 statement/branch/line ≥ 80%
 
 ## 완료 기준
 - 정책 체크리스트 전부 통과
@@ -97,6 +99,7 @@
 |------|----------|------|
 | World ID proof | `verifyCloudProof()` 사용 | [ ] |
 | SIWE 서명 | `SiweMessage.verify()` 사용 | [ ] |
+| EIP-1271 | **viem** 기반 검증 | [ ] |
 | nonce | 단일 사용 + 만료 처리 | [ ] |
 | nullifier_hash | `(action, nullifier_hash)` 유니크 | [ ] |
 | 세션 | 위변조 방지 (서명/암호화) | [ ] |
@@ -104,6 +107,7 @@
 | Rate limit | abuse 방지 로직 | [ ] |
 
 ### 테스트 커버리지 체크리스트
+**기준:** BE 유닛 테스트 statement/branch/line ≥ 80%
 
 **유닛 테스트:**
 - [ ] proof 검증 로직
@@ -124,3 +128,6 @@
 ### 참조 문서
 - `/docs/World-Chain-Guide.md` - 정책 준수 체크리스트
 - `CLAUDE.md` - 프로젝트 필수/금지 규칙
+- `/docs/phases/ENV.md` - 환경변수 통합 문서
+- `/docs/phases/DB-MIGRATIONS.md` - DB 마이그레이션 SQL 문서
+- `/docs/phases/ARCHITECTURE.md` - FE/BE 경계 및 구조

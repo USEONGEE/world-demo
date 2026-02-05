@@ -6,8 +6,8 @@
 
 ## 범위
 - FE: 지갑 주소 입력/연결 UI, SIWE 서명 요청 및 결과 표시
-- BE: Challenge 발급, 서명 검증(EIP-191/EIP-1271), WalletBinding 생성
-- DB: WalletBinding, SiweChallenge 테이블
+- BE: Challenge 발급, 서명 검증(EIP-191/EIP-1271, **viem 사용**), WalletBinding 생성
+- DB: WalletBinding, SiweChallenge 테이블 (Supabase)
 
 ## 비범위
 - 지갑 목록 페이지(표시/관리) 고도화
@@ -37,10 +37,17 @@
 - POST /api/siwe/verify
   - 입력: payload(message, signature), nonce
   - 검증: nonce 매칭/만료/단일 사용
-  - 서명 검증: siwe.verify + 필요 시 EIP-1271
-  - address 중복: 다른 human_id에 이미 바인딩된 경우 409
+  - 서명 검증: siwe.verify + 필요 시 EIP-1271 (**viem**)
+  - address 중복:
+    - 동일 human_id면 idempotent 처리(200, bound: true)
+    - 다른 human_id면 409 (ADDRESS_ALREADY_BOUND)
   - 성공: WalletBinding 생성
   - 응답: { address, bound: true }
+
+## FE/BE 경계 (필수)
+- FE: Challenge 요청 + 서명 요청 + 결과 UI만 담당
+- BE: nonce 발급/검증, SIWE 검증, WalletBinding 저장 전담
+- `app/api/siwe/*`는 컨트롤러 역할만 수행 (도메인 호출)
 
 ## 데이터 모델
 ### SiweChallenge
@@ -62,6 +69,42 @@
 
 **제약:** (chain, address) 유니크
 
+## 세션 검증 (P0)
+- 모든 SIWE 요청은 **HTTP-only Cookie 세션**에서 human_id를 읽는다.
+- 구현 가이드:
+  - `cookies()`로 `wg_session` 조회
+  - 서명/만료 검증 후 `human_id` 추출
+  - 유효하지 않으면 401 반환
+
+**예시 (Next.js Route Handler):**
+```ts
+import { cookies } from 'next/headers'
+import { verifySessionToken } from '@/core/session'
+
+export function requireHumanId() {
+  const cookieStore = cookies()
+  const token = cookieStore.get('wg_session')?.value
+  if (!token) throw new Error('UNAUTHORIZED')
+
+  const session = verifySessionToken(token) // { human_id, exp }
+  return session.human_id
+}
+```
+
+## 중복 바인딩 처리 시나리오 (P1)
+- **Case A:** address가 같은 human_id에 이미 바인딩됨  
+  → 200 OK, `{ address, bound: true, idempotent: true }`
+- **Case B:** address가 다른 human_id에 바인딩됨  
+  → 409 Conflict, `{ error: { code: "ADDRESS_ALREADY_BOUND" } }`
+
+## DB 마이그레이션 (P0)
+Supabase SQL 스크립트 추가:
+- `db/001_create_siwe_challenge.sql`
+- `db/002_create_wallet_binding.sql`
+
+## 도메인 구조 정의 (P1)
+- `domains/wallet.md` 참고
+
 ## 보안/정책
 - FE payload 신뢰 금지, BE 검증 필수
 - 서명/메시지 원문 저장 최소화(로그 마스킹)
@@ -76,6 +119,7 @@
 - BE: 정상 서명 → 바인딩 성공
 - BE: nonce 불일치/만료/재사용 → 4xx
 - BE: 주소 중복 바인딩 → 409
+- BE: 동일 human_id 재바인딩 → 200 (idempotent)
 - FE: 성공/실패 상태 UI
 
 ## 완료 기준
@@ -95,7 +139,7 @@
 3. FE → World App: 서명 요청
 4. World App → FE: 서명 반환
 5. FE → BE: 서명 검증 요청
-6. BE: EIP-191 또는 EIP-1271 검증
+6. BE: EIP-191 또는 EIP-1271 검증 (EIP-1271은 **viem**)
 ```
 
 ### WalletAuth Input
@@ -239,7 +283,7 @@ export async function POST(request: Request) {
 | nonce | 단일 사용 (used 플래그 관리) |
 | 만료 처리 | expiration_time 체크 필수 |
 | 서명 원문 | 저장 최소화 (로그 마스킹) |
-| EIP-1271 | 스마트 컨트랙트 지갑 지원 고려 |
+| EIP-1271 | **viem**으로 스마트 컨트랙트 지갑 검증 |
 | FE payload | 신뢰 금지, BE 검증 필수 |
 
 ### 보안 체크리스트
@@ -252,5 +296,8 @@ export async function POST(request: Request) {
 
 ### 참조 문서
 - `/docs/World-Chain-Guide.md` - Wallet Auth 상세
+- `/docs/phases/ENV.md` - 환경변수 통합 문서
+- `/docs/phases/ARCHITECTURE.md` - FE/BE 경계 및 구조
 - `siwe` - Sign-In with Ethereum 라이브러리
+- `viem` - EIP-1271 검증 라이브러리
 - `@worldcoin/minikit-js` - WalletAuth Command

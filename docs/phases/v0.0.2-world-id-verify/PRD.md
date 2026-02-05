@@ -8,8 +8,8 @@
 - FE: Verify 버튼 + 성공/실패 상태 UI
 - FE: MiniKit Verify 호출 및 payload 전달
 - BE: proof 검증, 중복 처리, Human 생성
-- BE: 세션 발급(HTTP-only cookie 또는 Bearer 토큰)
-- DB: Human 테이블 및 유니크 제약
+- BE: 세션 발급(HTTP-only Cookie, 서명된 세션 토큰)
+- DB: Human 테이블 및 유니크 제약 (Supabase)
 
 ## 비범위
 - SIWE 지갑 바인딩
@@ -26,21 +26,30 @@
 ## 기능 요구사항
 ### FE
 - Verify Command 실행
-- finalPayload를 그대로 BE에 전달(해석/검증 금지)
+- finalPayload.status === 'success'일 때만 BE에 전달
+- finalPayload를 그대로 전달(해석/검증 금지, BE에서만 검증)
+- 타임아웃/재시도 후 실패 UI 제공
 - 성공/실패/중복 상태 UI 제공
 
 ### BE
 - POST /api/verify
-  - 입력: finalPayload(action, proof, merkle_root, nullifier_hash, verification_level, signal?)
+  - 입력: finalPayload(status, action, proof, merkle_root, nullifier_hash, verification_level?, signal?)
+  - 유효성: status가 존재하면 'success'만 허용
   - 검증: verifyCloudProof 사용
+  - 타임아웃/재시도: verifyCloudProof 10s 타임아웃 + 1회 재시도
   - 중복: (action, nullifier_hash) 유니크
   - 응답: { human_id, is_new }
-  - 세션: human_id 기반 세션 발급(만료 포함)
+  - 세션: human_id 기반 HTTP-only Cookie 발급(만료 포함)
 - GET /api/human/me
   - 현재 세션의 human_id 반환
 
+## FE/BE 경계 (필수)
+- FE: Verify 커맨드 호출 + payload 전달 + 상태 UI만 담당
+- BE: proof 검증, 중복 체크, Human 생성, 세션 발급 전담
+- `app/api/verify`는 컨트롤러 역할만 수행 (도메인 호출)
+
 ## 데이터 모델
-### Human
+### Human (gate.human)
 - id (UUID)
 - action (world_action)
 - nullifier_hash
@@ -48,12 +57,40 @@
 
 **제약:** (action, nullifier_hash) 유니크
 
+## 세션 관리 결정 (P0)
+**선택:** HTTP-only Cookie 기반 세션(서명된 토큰)
+
+### 세션 스펙
+- 쿠키명: `wg_session`
+- 값: 서명된 토큰(JWT 또는 HMAC 서명 JSON)
+- 포함 필드: `human_id`, `iat`, `exp`
+- 만료: 기본 7일 (환경변수로 조정)
+- 쿠키 옵션: `HttpOnly`, `SameSite=Lax`, `Secure`(prod), `Path=/`
+- 검증: BE에서 서명/만료 검증 후 `human_id` 추출
+- ENV: `SESSION_COOKIE_NAME`, `SESSION_TTL_SECONDS`, `SESSION_EXPIRES_IN` (fallback)
+
+### 참고
+- Bearer Token 방식은 제외 (FE 저장 위험/노출 리스크)
+- 세션 관련 ENV는 `/docs/phases/ENV.md` 참고
+
+## DB 마이그레이션 (P0)
+Supabase SQL 스크립트 추가:
+- `db/001_create_human.sql`
+스키마:
+- `gate.human`
+Supabase 타입 추가(권장):
+- `src/core/supabase/types.ts`에 human 테이블 타입 정의
+
+## 도메인 구조 정의 (P1)
+- `domains/human.md` 참고
+
 ## 보안/정책
 - proof 및 PII 저장 금지
 - FE payload 신뢰 금지, BE 검증 필수
 - 무한 로딩 방지(타임아웃/재시도)
 
 ## 분석 이벤트
+**FE 필수**
 - verify_start
 - verify_success
 - verify_fail (reason)
@@ -88,10 +125,12 @@ interface VerifyCommandInput {
 // Output
 interface VerifyCommandOutput {
   status: 'success' | 'error'
+  action: string
   proof?: string              // ZK proof
   merkle_root?: string        // Merkle tree root
   nullifier_hash?: string     // 익명 식별자 (중복 방지용)
   verification_level?: string
+  signal?: string
 }
 ```
 
@@ -143,6 +182,10 @@ import { verifyCloudProof } from '@worldcoin/minikit-js/backend'
 export async function POST(request: Request) {
   const payload = await request.json()
 
+  if (payload.status && payload.status !== 'success') {
+    return Response.json({ error: 'Invalid payload' }, { status: 400 })
+  }
+
   const verifyRes = await verifyCloudProof(
     payload,
     process.env.WLD_APP_ID!,
@@ -189,4 +232,6 @@ export async function POST(request: Request) {
 
 ### 참조 문서
 - `/docs/World-Chain-Guide.md` - Verify Command 상세
+- `/docs/phases/ENV.md` - 환경변수 통합 문서
+- `/docs/phases/ARCHITECTURE.md` - FE/BE 경계 및 구조
 - `@worldcoin/minikit-js/backend` - verifyCloudProof API
