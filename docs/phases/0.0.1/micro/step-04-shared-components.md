@@ -38,9 +38,10 @@ src/shared/
 ```
 
 ### 의존성
-- `@worldcoin/minikit-js/react` (useSafeAreaInsets)
-- Step 02 core/minikit (useMiniKitInstalled)
+- Step 02 core/minikit (useMiniKitInstalled, useSafeAreaInsets)
 - Step 05 shared/states (NotInstalledScreen, LoadingScreen)
+- Step 06 core/i18n (useTranslations)
+- Step 10 core/analytics (analytics)
 
 ## 3. 완료 조건
 
@@ -51,6 +52,8 @@ src/shared/
 - [ ] SafeAreaLayout이 좌우 최소 24px 패딩 적용
 - [ ] `src/shared/components/layout/TabNavigation.tsx` 존재
 - [ ] TabNavigation이 2개 탭 (Home, Settings) 렌더링
+- [ ] TabNavigation이 i18n (useTranslations) 사용
+- [ ] TabNavigation이 탭 전환 시 `tab_switched` 이벤트 추적
 - [ ] `src/shared/components/layout/AppGuard.tsx` 존재
 - [ ] AppGuard가 useMiniKitInstalled 훅 사용
 - [ ] `src/shared/utils/cn.ts` 존재
@@ -102,6 +105,73 @@ export function AppGuard({ children }: { children: ReactNode }) {
   if (isInstalled === null) return <LoadingScreen />
   if (!isInstalled) return <NotInstalledScreen />
   return <>{children}</>
+}
+```
+
+```typescript
+// src/shared/components/layout/TabNavigation.tsx
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useEffect, useMemo, useRef } from 'react'
+import { useTranslations } from 'next-intl'
+import { analytics } from '@/core/analytics'
+import { cn } from '@/shared/utils'
+
+export function TabNavigation() {
+  const t = useTranslations('tabs')
+  const pathname = usePathname()
+  const previousPath = useRef<string | null>(null)
+
+  const tabs = useMemo(
+    () => [
+      { href: '/home', label: t('home'), icon: '🏠' },
+      { href: '/settings', label: t('settings'), icon: '⚙️' },
+    ],
+    [t]
+  )
+
+  useEffect(() => {
+    const currentTab = tabs.find((tab) => tab.href === pathname)
+    if (!currentTab) return
+
+    if (previousPath.current && previousPath.current !== pathname) {
+      const fromTab = tabs.find((tab) => tab.href === previousPath.current)
+      if (fromTab) {
+        analytics.track({
+          name: 'tab_switched',
+          properties: { from: fromTab.href, to: currentTab.href },
+          timestamp: new Date(),
+        })
+      }
+    }
+
+    previousPath.current = pathname
+  }, [pathname, tabs])
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe">
+      <div className="flex justify-around items-center h-[60px]">
+        {tabs.map((tab) => {
+          const isActive = pathname === tab.href
+          return (
+            <Link
+              key={tab.href}
+              href={tab.href}
+              className={cn(
+                'flex flex-col items-center justify-center flex-1 h-full transition-colors',
+                isActive ? 'text-black' : 'text-gray-400'
+              )}
+            >
+              <span className="text-xl">{tab.icon}</span>
+              <span className="text-xs mt-1">{tab.label}</span>
+            </Link>
+          )
+        })}
+      </div>
+    </nav>
+  )
 }
 ```
 

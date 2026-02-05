@@ -52,6 +52,7 @@ src/providers/index.tsx   # I18nProvider 추가
   - common.appName
   - common.loading
   - common.error
+  - common.retry
   - tabs.home
   - tabs.settings
   - consent.title
@@ -59,6 +60,7 @@ src/providers/index.tsx   # I18nProvider 추가
   - consent.decline
   - settings.language
   - settings.contact
+  - settings.noContact
 - [ ] providers/index.tsx에 NextIntlClientProvider 추가
 - [ ] 언어 변경 시 UI 텍스트 변경 확인
 
@@ -77,18 +79,22 @@ export type Locale = (typeof locales)[number]
 // src/core/i18n/provider.tsx
 'use client'
 
-import { NextIntlClientProvider } from 'next-intl'
+import { NextIntlClientProvider, AbstractIntlMessages } from 'next-intl'
 import { ReactNode } from 'react'
 
 interface I18nProviderProps {
   children: ReactNode
   locale: string
-  messages: Record<string, unknown>
+  messages: AbstractIntlMessages
 }
 
 export function I18nProvider({ children, locale, messages }: I18nProviderProps) {
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider
+      locale={locale}
+      messages={messages}
+      timeZone={process.env.NEXT_PUBLIC_DEFAULT_TIMEZONE || 'UTC'}
+    >
       {children}
     </NextIntlClientProvider>
   )
@@ -116,7 +122,8 @@ export function I18nProvider({ children, locale, messages }: I18nProviderProps) 
   },
   "settings": {
     "language": "Language",
-    "contact": "Developer Contact"
+    "contact": "Developer Contact",
+    "noContact": "No contact information available"
   },
   "notInstalled": {
     "title": "World App Required",

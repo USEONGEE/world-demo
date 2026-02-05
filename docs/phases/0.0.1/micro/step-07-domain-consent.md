@@ -41,7 +41,8 @@ src/app/consent/
 ### 의존성
 - `zustand` (create, persist)
 - core/analytics (이벤트 추적)
-- shared/components/ui (Button)
+- core/i18n (useTranslations)
+- shared/components/ui (Button, Card)
 
 ## 3. 완료 조건
 
@@ -52,7 +53,8 @@ src/app/consent/
 - [ ] grantConsent 호출 시 `consent_granted` 이벤트 발생
 - [ ] declineConsent 호출 시 `consent_declined` 이벤트 발생
 - [ ] `src/domains/consent/components/ConsentForm.tsx` 존재
-- [ ] ConsentForm에 "I Agree", "Decline" 버튼 포함
+- [ ] ConsentForm이 i18n (useTranslations) 사용
+- [ ] ConsentForm에 동의/거부 버튼 포함
 - [ ] `src/domains/consent/client.ts`에서 ConsentForm export
 - [ ] `src/domains/consent/index.ts`에서 useConsentStore, types export
 - [ ] `src/app/consent/page.tsx` 존재

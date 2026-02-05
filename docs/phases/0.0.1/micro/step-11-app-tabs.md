@@ -40,8 +40,11 @@ src/providers/
 - domains/consent (ConsentForm, useConsentStore)
 - domains/settings (LanguageSelector, DeveloperContact, useSettingsStore)
 - shared/components/layout (AppGuard, SafeAreaLayout, TabNavigation)
-- core/minikit (MiniKitClientProvider)
+- shared/components/states (ErrorBoundary, OfflineScreen)
+- shared/hooks (useOffline)
+- core/minikit (MiniKitClientProvider, useLaunchLocation)
 - core/i18n (I18nProvider)
+- core/analytics (analytics)
 
 ## 3. 완료 조건
 
@@ -57,6 +60,9 @@ src/providers/
 - [ ] 동의 안함 → /consent 리다이렉트
 - [ ] 동의 완료 → /home 리다이렉트
 - [ ] 탭 전환 정상 동작 (Home ↔ Settings)
+- [ ] RootProviders에 ErrorBoundary 포함
+- [ ] RootProviders에 Offline 상태 처리 포함
+- [ ] 앱 시작 시 `app_open` 이벤트 발생 확인
 
 ---
 
@@ -66,12 +72,15 @@ src/providers/
 // src/providers/index.tsx
 'use client'
 
-import { ReactNode } from 'react'
-import { MiniKitClientProvider } from '@/core/minikit'
+import { ReactNode, useEffect, useRef } from 'react'
+import { MiniKitClientProvider, useLaunchLocation } from '@/core/minikit'
 import { I18nProvider } from '@/core/i18n'
+import { analytics } from '@/core/analytics'
+import { useConsentStore } from '@/domains/consent'
 import { useSettingsStore } from '@/domains/settings'
+import { ErrorBoundary, OfflineScreen } from '@/shared/components/states'
+import { useOffline } from '@/shared/hooks'
 
-// 메시지 로드 (동적 import)
 import en from '@/locales/en.json'
 import es from '@/locales/es.json'
 import th from '@/locales/th.json'
@@ -79,15 +88,40 @@ import ja from '@/locales/ja.json'
 import ko from '@/locales/ko.json'
 import pt from '@/locales/pt.json'
 
-const messages: Record<string, typeof en> = { en, es, th, ja, ko, pt }
+const messages = { en, es, th, ja, ko, pt } as const
 
 export function RootProviders({ children }: { children: ReactNode }) {
   const language = useSettingsStore((s) => s.language)
+  const consent = useConsentStore((s) => s.consent)
+  const isHydrated = useConsentStore((s) => s.isHydrated)
+  const launchLocation = useLaunchLocation()
+  const isOffline = useOffline()
+  const hasTrackedAppOpen = useRef(false)
+  const currentMessages = messages[language] || en
+
+  // app_open 이벤트 추적 (최초 1회)
+  useEffect(() => {
+    if (!isHydrated || hasTrackedAppOpen.current) return
+
+    analytics.track({
+      name: 'app_open',
+      properties: {
+        launchLocation,
+        language,
+        isReturningUser: consent !== null,
+      },
+      timestamp: new Date(),
+    })
+
+    hasTrackedAppOpen.current = true
+  }, [consent, isHydrated, language, launchLocation])
 
   return (
     <MiniKitClientProvider>
-      <I18nProvider locale={language} messages={messages[language] || en}>
-        {children}
+      <I18nProvider locale={language} messages={currentMessages}>
+        <ErrorBoundary>
+          {isOffline ? <OfflineScreen /> : children}
+        </ErrorBoundary>
       </I18nProvider>
     </MiniKitClientProvider>
   )

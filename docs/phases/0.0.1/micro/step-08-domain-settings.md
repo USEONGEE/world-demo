@@ -50,8 +50,10 @@ src/domains/settings/
 - [ ] Store 액션: setLanguage(lang: string)
 - [ ] setLanguage 호출 시 `language_changed` 이벤트 발생
 - [ ] `src/domains/settings/components/LanguageSelector.tsx` 존재
+- [ ] LanguageSelector가 i18n (useTranslations) 사용
 - [ ] LanguageSelector가 6개 언어 선택 가능
 - [ ] `src/domains/settings/components/DeveloperContact.tsx` 존재
+- [ ] DeveloperContact가 i18n (useTranslations) 사용
 - [ ] DeveloperContact가 이메일 + 지원 URL 표시
 - [ ] 환경변수 NEXT_PUBLIC_DEVELOPER_EMAIL, NEXT_PUBLIC_SUPPORT_URL 사용
 - [ ] `src/domains/settings/client.ts`에서 컴포넌트 export
