@@ -8,10 +8,19 @@ import type { VerifyResponse } from '@/shared/contracts'
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
+  const route = 'POST /api/verify'
+  console.log(`[${route}] ← request received`)
+
   try {
     const payload = await request.json()
+    console.log(`[${route}] payload:`, JSON.stringify(payload, null, 2))
 
     const result = await verifyHuman(payload)
+    console.log(`[${route}] verifyHuman result:`, {
+      human_id: result.human_id,
+      is_new: result.is_new,
+      hasToken: !!result.sessionToken,
+    })
 
     // Create response with session cookie
     const responseData: VerifyResponse = {
@@ -22,9 +31,16 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(responseData)
     setSessionCookie(response, result.sessionToken)
 
+    console.log(`[${route}] → 200 OK`)
     return response
   } catch (error) {
     if (error instanceof ApiError) {
+      console.error(`[${route}] → ApiError:`, {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+      })
+
       const statusMap: Record<string, number> = {
         [ErrorCodes.VALIDATION_ERROR]: 400,
         [ErrorCodes.VERIFICATION_FAILED]: 400,
@@ -42,7 +58,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error('Verify error:', error)
+    console.error(`[${route}] → Unexpected error:`, error)
+    console.error(`[${route}] → Stack:`, error instanceof Error ? error.stack : 'no stack')
     return errorResponse(
       ErrorCodes.INTERNAL_ERROR,
       'An unexpected error occurred',

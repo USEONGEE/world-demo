@@ -18,14 +18,23 @@ export type IssueBridgeResult = {
   expires_at: string
 }
 
+const log = (msg: string, data?: unknown) =>
+  console.log(`[issueBridge] ${msg}`, data !== undefined ? data : '')
+
+const logError = (msg: string, data?: unknown) =>
+  console.error(`[issueBridge] ${msg}`, data !== undefined ? data : '')
+
 /**
  * Generate an 8-character bridge code and store in DB
  */
 export async function issueBridge(humanId: string): Promise<IssueBridgeResult> {
+  log('called for human:', humanId)
+
   const now = new Date()
   const expiresAt = new Date(now.getTime() + BRIDGE_TTL_MS).toISOString()
 
   // Invalidate any previous unused codes for this human
+  log('marking previous unused codes')
   await markUnusedByHumanId(humanId)
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
@@ -34,6 +43,8 @@ export async function issueBridge(humanId: string): Promise<IssueBridgeResult> {
       code += BRIDGE_ALPHABET[randomInt(0, BRIDGE_ALPHABET.length)]
     }
 
+    log(`attempt ${attempt + 1}: generated code=${code}`)
+
     try {
       await insertBridgeToken({
         human_id: humanId,
@@ -41,13 +52,16 @@ export async function issueBridge(humanId: string): Promise<IssueBridgeResult> {
         expires_at: expiresAt,
       })
 
+      log('bridge token inserted successfully')
       return { code, expires_at: expiresAt }
     } catch (error: unknown) {
       // Unique constraint violation → retry
       const pgError = error as { code?: string }
       if (pgError.code === '23505' && attempt < MAX_RETRIES - 1) {
+        log('code collision (23505), retrying...')
         continue
       }
+      logError('insert failed:', error)
       throw error
     }
   }

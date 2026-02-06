@@ -14,6 +14,9 @@ export type IssueChallengeResult = {
   expiration_time: string
 }
 
+const log = (msg: string, data?: unknown) =>
+  console.log(`[issueChallenge] ${msg}`, data !== undefined ? data : '')
+
 /**
  * Issue a SIWE challenge for wallet binding
  */
@@ -21,12 +24,16 @@ export async function issueChallenge(
   humanId: string,
   address: string
 ): Promise<IssueChallengeResult> {
+  log('called:', { humanId, address })
+
   // Generate nonce using siwe library
   const nonce = generateNonce()
 
   const now = new Date()
   const issuedAt = now.toISOString()
   const expirationTime = new Date(now.getTime() + CHALLENGE_VALIDITY_MS).toISOString()
+
+  log('inserting challenge:', { nonce, issuedAt, expirationTime })
 
   // Store challenge in DB
   await insertChallenge({
@@ -36,6 +43,8 @@ export async function issueChallenge(
     issued_at: issuedAt,
     expiration_time: expirationTime,
   })
+
+  log('challenge inserted successfully')
 
   return {
     nonce,

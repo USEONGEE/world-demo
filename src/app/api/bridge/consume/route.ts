@@ -21,12 +21,17 @@ function getClientIp(request: NextRequest): string {
 }
 
 export async function POST(request: NextRequest) {
+  const route = 'POST /api/bridge/consume'
+  console.log(`[${route}] ← request received`)
+
   try {
     // 1. Parse and validate request body
     const body = await request.json()
+    console.log(`[${route}] body:`, JSON.stringify(body))
     const parseResult = BridgeConsumeRequestSchema.safeParse(body)
 
     if (!parseResult.success) {
+      console.error(`[${route}] → 400 validation:`, parseResult.error.flatten())
       return errorResponse(
         ErrorCodes.VALIDATION_ERROR,
         'Invalid request',
@@ -38,9 +43,11 @@ export async function POST(request: NextRequest) {
     const { code } = parseResult.data
 
     const clientIp = getClientIp(request)
+    console.log(`[${route}] clientIp=${clientIp}, code=${code}`)
     const ipKey = `bridge:consume:code:${clientIp}:${code}`
     const ipLimit = checkRateLimit(ipKey, 10, 10 * 60 * 1000)
     if (!ipLimit.allowed) {
+      console.log(`[${route}] → 429 rate limited, resetAt=${new Date(ipLimit.resetAt).toISOString()}`)
       return errorResponse(
         ErrorCodes.RATE_LIMITED,
         'Too many requests',
@@ -50,7 +57,9 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Consume bridge code (validates + returns human_id)
+    console.log(`[${route}] consuming bridge code=${code}`)
     const result = await consumeBridge(code, { ip: clientIp })
+    console.log(`[${route}] bridge consumed: human_id=${result.human_id}`)
 
     // 3. Create session token and set cookie
     const token = await createSessionToken({ human_id: result.human_id })
@@ -59,9 +68,16 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(responseData)
     setSessionCookie(response, token)
 
+    console.log(`[${route}] → 200 OK`)
     return response
   } catch (error) {
     if (error instanceof ApiError) {
+      console.error(`[${route}] → ApiError:`, {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+      })
+
       const statusMap: Record<string, number> = {
         [ErrorCodes.VALIDATION_ERROR]: 400,
         [ErrorCodes.INVALID_BRIDGE_CODE]: 400,
@@ -79,7 +95,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error('Bridge consume error:', error)
+    console.error(`[${route}] → Unexpected error:`, error)
+    console.error(`[${route}] → Stack:`, error instanceof Error ? error.stack : 'no stack')
     return errorResponse(
       ErrorCodes.INTERNAL_ERROR,
       'An unexpected error occurred',
