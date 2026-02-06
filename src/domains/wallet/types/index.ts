@@ -16,3 +16,16 @@ export type SiweChallenge = {
   expiration_time: string
   used: boolean
 }
+
+// Client state for wallet binding
+export type WalletBindingStatus = 'idle' | 'loading' | 'signing' | 'verifying' | 'success' | 'error'
+
+export interface WalletState {
+  wallets: WalletBinding[]
+  isLoading: boolean
+  error: string | null
+  status: WalletBindingStatus
+  fetchWallets: () => Promise<void>
+  bindWallet: () => Promise<void>
+  reset: () => void
+}
