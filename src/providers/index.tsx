@@ -40,6 +40,18 @@ export function RootProviders({ children }: { children: ReactNode }) {
     hasTrackedAppOpen.current = true
   }, [consent, isHydrated, language, launchLocation])
 
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') return
+
+    fetch('/__nextjs_devtools_config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ disableDevIndicator: true }),
+    }).catch(() => {})
+
+    fetch('/__nextjs_disable_dev_indicator', { method: 'POST' }).catch(() => {})
+  }, [])
+
   return (
     <MiniKitClientProvider>
       <I18nProvider locale={language} messages={currentMessages}>
