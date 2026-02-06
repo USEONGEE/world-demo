@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { SiweMessage } from 'siwe'
-import { createPublicClient, http, verifyMessage } from 'viem'
+import { createPublicClient, http, hashMessage } from 'viem'
 import { worldchain } from 'viem/chains'
 import { ApiError, ErrorCodes } from '@/shared/errors'
 import {
@@ -138,7 +138,7 @@ export async function verifySiwe(
         ],
         functionName: 'isValidSignature',
         args: [
-          await hashMessage(payload.message),
+          hashMessage(payload.message),
           payload.signature as `0x${string}`,
         ],
       })
@@ -199,18 +199,4 @@ export async function verifySiwe(
     address,
     bound: true,
   }
-}
-
-// Helper to hash message for EIP-1271
-async function hashMessage(message: string): Promise<`0x${string}`> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(message)
-  const prefix = encoder.encode(`\x19Ethereum Signed Message:\n${data.length}`)
-  const combined = new Uint8Array(prefix.length + data.length)
-  combined.set(prefix)
-  combined.set(data, prefix.length)
-
-  const hashBuffer = await crypto.subtle.digest('SHA-256', combined)
-  const hashArray = new Uint8Array(hashBuffer)
-  return `0x${Array.from(hashArray).map(b => b.toString(16).padStart(2, '0')).join('')}` as `0x${string}`
 }
