@@ -2,7 +2,7 @@
 
 import { useMiniKitInstalled } from '@/core/minikit'
 import { NotInstalledScreen, LoadingScreen } from '@/shared/components/states'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 export function AppGuard({ children }: { children: ReactNode }) {
   const isInstalled = useMiniKitInstalled()
