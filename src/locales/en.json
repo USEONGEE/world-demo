@@ -22,11 +22,6 @@
     "contact": "Developer Contact",
     "noContact": "No contact information available"
   },
-  "notInstalled": {
-    "title": "World App Required",
-    "description": "This app requires World App to function.",
-    "download": "Download World App"
-  },
   "offline": {
     "title": "No Connection",
     "description": "Please check your internet connection."

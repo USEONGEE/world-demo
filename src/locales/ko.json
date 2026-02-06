@@ -22,11 +22,6 @@
     "contact": "개발자 연락처",
     "noContact": "연락처 정보가 없습니다"
   },
-  "notInstalled": {
-    "title": "World App 필요",
-    "description": "이 앱은 World App이 필요합니다.",
-    "download": "World App 다운로드"
-  },
   "offline": {
     "title": "연결 없음",
     "description": "인터넷 연결을 확인해 주세요."
