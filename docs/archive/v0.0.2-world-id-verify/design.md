@@ -118,7 +118,8 @@ interface HumanState {
 - verify_duplicate
 
 ### DB 마이그레이션
-`docs/phases/v0.0.2-world-id-verify/db/001_create_human.sql` 실행 (gate.human)
+`supabase/migrations/0000_create_human.sql` 실행 (gate.human)
+`supabase/migrations/0001_gate_human_rls.sql` 실행 (RLS/권한)
 
 ---
 

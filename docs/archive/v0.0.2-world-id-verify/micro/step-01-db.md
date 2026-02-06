@@ -10,9 +10,10 @@
 ## 1. 구현 내용 (design.md 기반)
 
 ### DB 마이그레이션
-- `docs/phases/v0.0.2-world-id-verify/db/001_create_human.sql` 실행
+- `supabase/migrations/0000_create_human.sql` 실행
 - gate.human 테이블 생성: id(UUID), action(text), nullifier_hash(text), created_at(timestamptz)
 - (action, nullifier_hash) 유니크 인덱스 생성
+- RLS/권한 설정: `supabase/migrations/0001_gate_human_rls.sql` 실행 (권장)
 
 ### Supabase 타입 생성
 - `src/core/supabase/types.ts`에 human 테이블 타입 추가
@@ -54,8 +55,12 @@ src/core/supabase/types.ts    # Database 타입에 human 테이블 추가
 
 ### SQL 실행
 ```
-docs/phases/v0.0.2-world-id-verify/db/001_create_human.sql
-→ Supabase Dashboard SQL Editor에서 실행
+supabase/migrations/0000_create_human.sql
+→ Supabase CLI: supabase db push
+→ 또는 Supabase Dashboard SQL Editor에서 실행
+
+supabase/migrations/0001_gate_human_rls.sql
+→ RLS/권한 설정 (권장)
 ```
 
 ### 의존성 분석

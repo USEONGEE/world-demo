@@ -75,7 +75,8 @@
 
 ## DB 마이그레이션 (P0)
 Supabase SQL 스크립트 추가:
-- `db/001_create_human.sql`
+- `supabase/migrations/0000_create_human.sql`
+- `supabase/migrations/0001_gate_human_rls.sql`
 스키마:
 - `gate.human`
 Supabase 타입 추가(권장):

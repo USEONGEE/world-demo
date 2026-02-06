@@ -48,5 +48,6 @@
 
 ## 참고 문서
 - [PRD.md](./PRD.md) - 상세 기능 요구사항
-- [db/001_create_human.sql](./db/001_create_human.sql) - DB 스키마
+- [supabase/migrations/0000_create_human.sql](/supabase/migrations/0000_create_human.sql) - DB 스키마
+- [supabase/migrations/0001_gate_human_rls.sql](/supabase/migrations/0001_gate_human_rls.sql) - RLS/권한
 - [domains/human.md](./domains/human.md) - 도메인 구조

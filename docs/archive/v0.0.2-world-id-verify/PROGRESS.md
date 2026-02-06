@@ -31,9 +31,10 @@
 - 2026-02-06: Step 5 완료 (모든 step FP/FN 검증 통과, 개발 준비 완료)
 - 2026-02-06: Step 6 완료 (모든 개발 step 구현 완료)
 - 2026-02-05: FP/FN 재검증 보정 (status/optional 필드, timeout/retry, analytics, client 구조)
-- 기존 PRD.md, db/, domains/ 문서 존재 (참고 자료로 활용)
+- 기존 PRD.md, migrations, domains 문서 존재 (참고 자료로 활용)
 
 ## 배포 전 필수 작업
-- [ ] Supabase CLI로 마이그레이션 실행: `supabase db push` 또는 Dashboard에서 `supabase/migrations/0000_create_human.sql` 실행
+- [ ] Supabase CLI로 마이그레이션 실행: `supabase db push`
+- [ ] Dashboard에서 SQL 실행 시: `supabase/migrations/0000_create_human.sql`, `supabase/migrations/0001_gate_human_rls.sql`
 - [ ] `.env.local`에 실제 Supabase URL/Keys 설정
 - [ ] `.env.local`에 `SESSION_SECRET` 실제 값 설정 (32자 이상)
