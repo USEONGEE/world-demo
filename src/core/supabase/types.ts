@@ -25,6 +25,77 @@ export type Database = {
         }
         Relationships: []
       }
+      siwe_challenge: {
+        Row: {
+          id: string
+          human_id: string
+          address: string
+          nonce: string
+          issued_at: string
+          expiration_time: string
+          used: boolean
+        }
+        Insert: {
+          id?: string
+          human_id: string
+          address: string
+          nonce: string
+          issued_at: string
+          expiration_time: string
+          used?: boolean
+        }
+        Update: {
+          id?: string
+          human_id?: string
+          address?: string
+          nonce?: string
+          issued_at?: string
+          expiration_time?: string
+          used?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'siwe_challenge_human_id_fkey'
+            columns: ['human_id']
+            referencedRelation: 'human'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      wallet_binding: {
+        Row: {
+          id: string
+          human_id: string
+          chain: string
+          address: string
+          verified_at: string
+          verification_method: string
+        }
+        Insert: {
+          id?: string
+          human_id: string
+          chain: string
+          address: string
+          verified_at?: string
+          verification_method?: string
+        }
+        Update: {
+          id?: string
+          human_id?: string
+          chain?: string
+          address?: string
+          verified_at?: string
+          verification_method?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'wallet_binding_human_id_fkey'
+            columns: ['human_id']
+            referencedRelation: 'human'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -43,3 +114,9 @@ export type Database = {
 // Convenience type aliases
 export type Human = Database['gate']['Tables']['human']['Row']
 export type HumanInsert = Database['gate']['Tables']['human']['Insert']
+
+export type SiweChallenge = Database['gate']['Tables']['siwe_challenge']['Row']
+export type SiweChallengeInsert = Database['gate']['Tables']['siwe_challenge']['Insert']
+
+export type WalletBinding = Database['gate']['Tables']['wallet_binding']['Row']
+export type WalletBindingInsert = Database['gate']['Tables']['wallet_binding']['Insert']
