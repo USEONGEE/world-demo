@@ -98,7 +98,6 @@
     "wallet_checking": "Checking wallet status...",
     "wallet_bound": "Already linked",
     "wallet_unbound": "Not linked yet",
-    "switch_wallet_button": "Change wallet",
     "connecting_wallet": "Connecting...",
     "signing_message": "Sign the message...",
     "verifying_signature": "Verifying...",

@@ -98,7 +98,6 @@
     "wallet_checking": "지갑 상태 확인 중...",
     "wallet_bound": "이미 등록됨",
     "wallet_unbound": "아직 등록되지 않음",
-    "switch_wallet_button": "지갑 변경",
     "connecting_wallet": "연결 중...",
     "signing_message": "메시지에 서명하세요...",
     "verifying_signature": "서명 확인 중...",

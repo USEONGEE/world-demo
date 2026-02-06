@@ -70,21 +70,6 @@ export function useBrowserWallet() {
     [address]
   )
 
-  const connectWallet = useCallback(async () => {
-    setStatus('connecting')
-    setError(null)
-    try {
-      const nextAddress = await refreshAddress(true)
-      if (nextAddress) {
-        await refreshBindingStatus(nextAddress)
-      }
-      setStatus('idle')
-    } catch (err) {
-      setStatus('error')
-      setError(err instanceof Error ? err.message : 'Unknown error')
-    }
-  }, [refreshAddress, refreshBindingStatus])
-
   const connectAndBind = useCallback(async () => {
     const ethereum = getEthereum()
     if (!ethereum) return
@@ -246,7 +231,6 @@ export function useBrowserWallet() {
     status,
     error,
     hasEthereum,
-    connectWallet,
     connectAndBind,
     refreshBindingStatus,
     reset,

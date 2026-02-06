@@ -15,7 +15,6 @@ export default function BridgeConnectPage() {
     status,
     error,
     hasEthereum,
-    connectWallet,
     connectAndBind,
     reset,
   } = useBrowserWallet()
@@ -67,7 +66,7 @@ export default function BridgeConnectPage() {
           )}
 
           <Button
-            onClick={() => { reset(); connectWallet() }}
+            onClick={() => { reset(); connectAndBind() }}
             className="w-full"
             disabled={isLoading}
           >
@@ -135,14 +134,6 @@ export default function BridgeConnectPage() {
           )}
         </Button>
 
-        <Button
-          onClick={() => { reset(); connectWallet() }}
-          variant="secondary"
-          className="w-full"
-          disabled={isLoading}
-        >
-          {t('switch_wallet_button')}
-        </Button>
       </div>
     </Card>
   )
