@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/shared/components/ui/Button'
 import { Card } from '@/shared/components/ui/Card'
@@ -13,6 +14,7 @@ export function VerifyButton() {
   const isMiniKitInstalled = useMiniKitInstalled()
   const { isHydrated, isVerified, humanId, checkSession } = useHuman()
   const { verify, isVerifying, error, status, isDuplicate } = useVerify()
+  const router = useRouter()
 
   // Check session on mount
   useEffect(() => {
@@ -34,7 +36,17 @@ export function VerifyButton() {
   if (isMiniKitInstalled === false) {
     return (
       <Card>
-        <p className="text-gray-500 text-center">{t('minikit_required')}</p>
+        <div className="space-y-3 text-center">
+          <p className="text-gray-500">{t('minikit_required')}</p>
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => router.push('/bridge')}
+          >
+            {t('bridge_cta')}
+          </Button>
+          <p className="text-xs text-gray-400">{t('bridge_cta_hint')}</p>
+        </div>
       </Card>
     )
   }

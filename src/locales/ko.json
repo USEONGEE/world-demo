@@ -44,7 +44,9 @@
     "duplicate_message": "이 World ID는 이미 사용되었습니다",
     "error": "인증 실패",
     "retry": "다시 시도",
-    "minikit_required": "World App에서 이 앱을 열어주세요"
+    "minikit_required": "World App에서 이 앱을 열어주세요",
+    "bridge_cta": "브릿지 코드 입력",
+    "bridge_cta_hint": "브라우저에서 지갑을 연결하려면 코드를 입력하세요"
   },
   "wallet": {
     "button": "지갑 연결",

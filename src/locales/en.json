@@ -44,7 +44,9 @@
     "duplicate_message": "This World ID has already been used",
     "error": "Verification Failed",
     "retry": "Try Again",
-    "minikit_required": "Please open this app in World App"
+    "minikit_required": "Please open this app in World App",
+    "bridge_cta": "Enter bridge code",
+    "bridge_cta_hint": "Use this on a desktop browser to connect your wallet"
   },
   "wallet": {
     "button": "Connect Wallet",

@@ -7,6 +7,7 @@ import { analytics } from '@/core/analytics'
 import { useConsentStore } from '@/domains/consent'
 import { useSettingsStore } from '@/domains/settings'
 import { ErrorBoundary, OfflineScreen } from '@/shared/components/states'
+import { SessionGuard } from '@/shared/components/layout'
 import { useOffline } from '@/shared/hooks'
 
 import en from '@/locales/en.json'
@@ -43,7 +44,9 @@ export function RootProviders({ children }: { children: ReactNode }) {
     <MiniKitClientProvider>
       <I18nProvider locale={language} messages={currentMessages}>
         <ErrorBoundary>
-          {isOffline ? <OfflineScreen /> : children}
+          {isOffline ? <OfflineScreen /> : (
+            <SessionGuard>{children}</SessionGuard>
+          )}
         </ErrorBoundary>
       </I18nProvider>
     </MiniKitClientProvider>
