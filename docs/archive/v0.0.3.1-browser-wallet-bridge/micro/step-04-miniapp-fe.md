@@ -10,24 +10,25 @@
 ## 1. 구현 내용 (design.md 기반)
 - `src/domains/bridge/client/store/bridge.store.ts`: Zustand store - 코드 발급/재발급 상태 관리
 - `src/domains/bridge/client/hooks/useBridge.ts`: store wrapper hook
-- `src/domains/bridge/client/components/BridgeIssueCard.tsx`: 코드 텍스트(XXX-XXX) + QR 표시 + 만료 카운트다운 + 재발급 버튼
+- `src/domains/bridge/client/components/BridgeIssueCard.tsx`: 코드 텍스트(XXXX-XXXX) + QR 표시 + 만료 카운트다운 + 재발급 버튼
 - `src/domains/bridge/client/components/index.ts`: barrel export
 - `src/domains/bridge/client/hooks/index.ts`: barrel export
 - `src/domains/bridge/client/index.ts`: barrel export
 - `src/domains/bridge/index.ts`: barrel export
-- `src/app/(tabs)/home/page.tsx`에 BridgeIssueCard 통합
+- `src/app/(tabs)/wallet/page.tsx`에 BridgeIssueCard 통합
 - `package.json`에 `qrcode.react` 의존성 추가
 
 ## 2. 완료 조건
 - [ ] `bridge.store.ts`에 code, expiresAt, isLoading, error 상태 존재
 - [ ] `bridge.store.ts`의 issueBridge()가 POST /api/bridge/issue 호출 후 code/expiresAt 설정
 - [ ] `BridgeIssueCard.tsx`가 "브라우저로 지갑 연결" 버튼을 렌더링
-- [ ] 코드 발급 후 "XXX-XXX" 형식으로 코드 표시
-- [ ] 코드 발급 후 QR 코드 표시 (https://domain/bridge?code=XXXXXX 인코딩)
+- [ ] 코드 발급 후 "XXXX-XXXX" 형식으로 코드 표시
+- [ ] 코드 발급 후 QR 코드 표시 (https://domain/bridge?code=XXXXXXXX 인코딩)
 - [ ] 만료 카운트다운 표시 (남은 시간)
 - [ ] 재발급 버튼 동작
 - [ ] BridgeIssueCard가 isVerified=true일 때만 코드 발급 버튼 표시
-- [ ] Home 페이지에서 BridgeIssueCard 컴포넌트 렌더링 확인
+- [ ] MiniKit 미설치 시 안내 메시지 표시
+- [ ] Wallet 탭에서 BridgeIssueCard 컴포넌트 렌더링 확인
 - [ ] `qrcode.react` 의존성이 package.json에 추가됨
 
 ---
@@ -40,7 +41,7 @@
 ### 수정 대상 파일
 ```
 package.json                        # 수정 - qrcode.react 의존성 추가
-src/app/(tabs)/home/page.tsx        # 수정 - BridgeIssueCard 컴포넌트 통합
+src/app/(tabs)/wallet/page.tsx      # 수정 - BridgeIssueCard 컴포넌트 통합
 ```
 
 ### 신규 생성 파일

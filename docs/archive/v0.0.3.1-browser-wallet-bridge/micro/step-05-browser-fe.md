@@ -9,14 +9,14 @@
 
 ## 1. 구현 내용 (design.md 기반)
 - `src/app/bridge/layout.tsx`: 데스크톱 전용 레이아웃 (AppGuard 밖, max-w-md mx-auto)
-- `src/app/bridge/page.tsx`: 6자리 코드 입력 폼, ?code= 쿼리 파라미터 지원, consume API 호출, 성공 시 /bridge/connect 리다이렉트
+- `src/app/bridge/page.tsx`: 8자리 코드 입력 폼, ?code= 쿼리 파라미터 지원, consume API 호출, 성공 시 /bridge/connect 리다이렉트
 - `src/app/bridge/connect/page.tsx`: 세션 확인, MetaMask 연결 + SIWE 바인딩 UI
 - `src/domains/bridge/client/hooks/useBrowserWallet.ts`: window.ethereum + viem createWalletClient + SiweMessage, 기존 /api/siwe/challenge, /api/siwe/verify 재사용
 
 ## 2. 완료 조건
 - [ ] `/bridge` 라우트가 AppGuard 없이 접근 가능
-- [ ] `/bridge` 페이지에 6자리 코드 입력 UI 렌더링
-- [ ] URL `?code=123456` 쿼리 파라미터로 자동 입력 동작
+- [ ] `/bridge` 페이지에 8자리 코드 입력 UI 렌더링
+- [ ] URL `?code=7K3M9T2Q` 쿼리 파라미터로 자동 입력 동작
 - [ ] 유효한 코드 입력 시 POST /api/bridge/consume 호출 후 /bridge/connect로 리다이렉트
 - [ ] 잘못된 코드 시 에러 메시지 표시 (미존재/만료/사용됨)
 - [ ] `/bridge/connect` 페이지에서 /api/human/me로 세션 확인

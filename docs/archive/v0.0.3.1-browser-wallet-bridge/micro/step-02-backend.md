@@ -8,13 +8,13 @@
 ---
 
 ## 1. 구현 내용 (design.md 기반)
-- `src/shared/errors/http.ts`에 BRIDGE_NOT_FOUND, BRIDGE_EXPIRED, BRIDGE_ALREADY_USED 추가 (Step 03에서 분리 → 의존성 해결)
+- `src/shared/errors/http.ts`에 INVALID_BRIDGE_CODE, BRIDGE_EXPIRED, BRIDGE_ALREADY_USED, RATE_LIMITED 추가 (Step 03에서 분리 → 의존성 해결)
 - `src/shared/contracts/bridge.ts`: BridgeConsumeRequestSchema, BridgeIssueResponse, BridgeConsumeResponse 타입
 - `src/shared/contracts/index.ts`에 bridge export 추가
 - `src/domains/bridge/types/index.ts`: BridgeToken 타입 정의
-- `src/domains/bridge/repo/bridge.repo.ts`: insertBridgeToken, findByCode, markUsed
+- `src/domains/bridge/repo/bridge.repo.ts`: insertBridgeToken, findByCode, markUsed, markUnusedByHumanId
 - `src/domains/bridge/repo/index.ts`: barrel export
-- `src/domains/bridge/server/issueBridge.ts`: crypto.randomInt로 6자리 코드 생성, 5분 TTL, DB 저장, 충돌 시 최대 3회 재시도
+- `src/domains/bridge/server/issueBridge.ts`: Base32 8자리 코드 생성, 10분 TTL, 기존 코드 폐기, DB 저장, 충돌 시 최대 3회 재시도
 - `src/domains/bridge/server/consumeBridge.ts`: 코드 검증 (존재/만료/사용 여부), used=true, human_id 반환
 - `src/domains/bridge/server/index.ts`: barrel export
 
@@ -23,9 +23,10 @@
 - [ ] `bridge.repo.ts`의 insertBridgeToken이 bridge_token 레코드를 생성하고 반환
 - [ ] `bridge.repo.ts`의 findByCode가 code로 bridge_token을 조회 (null 가능)
 - [ ] `bridge.repo.ts`의 markUsed가 used=true로 업데이트
-- [ ] `issueBridge.ts`가 6자리 숫자 코드를 생성하고 DB에 저장 후 { code, expires_at } 반환
+- [ ] `bridge.repo.ts`의 markUnusedByHumanId가 기존 unused 코드를 폐기
+- [ ] `issueBridge.ts`가 8자리 Base32 코드를 생성하고 DB에 저장 후 { code, expires_at } 반환
 - [ ] `issueBridge.ts`에서 코드 충돌 시 최대 3회 재시도 로직 존재
-- [ ] `consumeBridge.ts`가 코드 미존재 시 BRIDGE_NOT_FOUND ApiError throw
+- [ ] `consumeBridge.ts`가 코드 미존재 시 INVALID_BRIDGE_CODE ApiError throw
 - [ ] `consumeBridge.ts`가 만료된 코드에 대해 BRIDGE_EXPIRED ApiError throw
 - [ ] `consumeBridge.ts`가 사용된 코드에 대해 BRIDGE_ALREADY_USED ApiError throw
 - [ ] `consumeBridge.ts`가 성공 시 used=true 처리 후 human_id 반환
@@ -39,7 +40,7 @@
 
 ### 수정 대상 파일
 ```
-src/shared/errors/http.ts       # 수정 - BRIDGE_NOT_FOUND, BRIDGE_EXPIRED, BRIDGE_ALREADY_USED 추가
+src/shared/errors/http.ts       # 수정 - INVALID_BRIDGE_CODE, BRIDGE_EXPIRED, BRIDGE_ALREADY_USED, RATE_LIMITED 추가
 src/shared/contracts/index.ts   # 수정 - export * from './bridge' 추가
 ```
 
@@ -50,10 +51,10 @@ src/shared/contracts/bridge.ts  # 신규 - BridgeConsumeRequestSchema, 응답 �
 src/domains/bridge/
 ├── types/index.ts              # 신규 - BridgeToken 타입
 ├── repo/
-│   ├── bridge.repo.ts          # 신규 - insertBridgeToken, findByCode, markUsed
+│   ├── bridge.repo.ts          # 신규 - insertBridgeToken, findByCode, markUsed, markUnusedByHumanId
 │   └── index.ts                # 신규 - barrel export
 ├── server/
-│   ├── issueBridge.ts          # 신규 - 6자리 코드 생성 + DB 저장 + 재시도 3회
+│   ├── issueBridge.ts          # 신규 - 8자리 코드 생성 + 기존 코드 폐기 + 재시도 3회
 │   ├── consumeBridge.ts        # 신규 - 코드 검증 + human_id 반환
 │   └── index.ts                # 신규 - barrel export
 └── index.ts                    # 신규 - barrel export (types만)

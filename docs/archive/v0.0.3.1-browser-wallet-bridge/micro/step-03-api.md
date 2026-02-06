@@ -14,14 +14,15 @@
 > **Note**: ErrorCodes, Contracts는 Step 02에서 함께 구현 (의존성 해결)
 
 ## 2. 완료 조건
-- [ ] `contracts/bridge.ts`의 BridgeConsumeRequestSchema가 6자리 숫자만 통과 (123456 ✅, 12345 ❌, abcdef ❌)
-- [ ] `errors/http.ts`에 BRIDGE_NOT_FOUND, BRIDGE_EXPIRED, BRIDGE_ALREADY_USED 에러 코드 존재
+- [ ] `contracts/bridge.ts`의 BridgeConsumeRequestSchema가 8자리 Base32만 통과 (7K3M9T2Q ✅, 123456 ❌, abcdef ❌)
+- [ ] `errors/http.ts`에 INVALID_BRIDGE_CODE, BRIDGE_EXPIRED, BRIDGE_ALREADY_USED, RATE_LIMITED 에러 코드 존재
 - [ ] `POST /api/bridge/issue`가 세션 없으면 401 반환
 - [ ] `POST /api/bridge/issue`가 세션 있으면 { code, expires_at } 반환
 - [ ] `POST /api/bridge/consume`이 유효한 코드에 대해 200 + Set-Cookie: wg_session 반환
-- [ ] `POST /api/bridge/consume`이 미존재 코드에 대해 404 반환
+- [ ] `POST /api/bridge/consume`이 잘못된/미존재 코드에 대해 400 반환
 - [ ] `POST /api/bridge/consume`이 만료 코드에 대해 400 반환
 - [ ] `POST /api/bridge/consume`이 사용된 코드에 대해 400 반환
+- [ ] `POST /api/bridge/issue`와 `POST /api/bridge/consume`이 Rate Limit 초과 시 429 반환
 - [ ] `POST /api/bridge/consume`이 잘못된 형식에 대해 400 (validation error) 반환
 
 ---
