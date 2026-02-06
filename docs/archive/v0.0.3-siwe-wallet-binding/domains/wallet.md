@@ -12,19 +12,19 @@
 ## 예상 폴더 구조
 ```
 src/domains/wallet/
-├── services/
+├── server/
 │   ├── issueChallenge.ts       # nonce 발급
 │   ├── verifySiwe.ts            # 서명 검증 + 바인딩
 │   └── listWallets.ts           # 지갑 목록 조회
+├── client/
+│   ├── components/              # UI 컴포넌트
+│   ├── hooks/                   # useWalletBinding 등
+│   └── store/                   # Zustand 상태
 ├── types/
 │   └── index.ts                 # WalletBinding, SiweChallenge 타입
 ├── repo/
 │   ├── wallet.repo.ts           # wallet_binding 접근
 │   └── challenge.repo.ts        # siwe_challenge 접근
-├── hooks/
-│   └── useWallets.ts            # FE 상태 래핑 (선택)
-├── store/
-│   └── wallet.store.ts          # FE 상태 (선택, Zustand)
 └── index.ts                     # Public API
 ```
 

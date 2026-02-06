@@ -7,6 +7,7 @@
 ## 범위
 - FE: 지갑 주소 입력/연결 UI, SIWE 서명 요청 및 결과 표시
 - BE: Challenge 발급, 서명 검증(EIP-191/EIP-1271, **viem 사용**), WalletBinding 생성
+- BE: 현재 사용자 지갑 목록 조회
 - DB: WalletBinding, SiweChallenge 테이블 (Supabase)
 
 ## 비범위
@@ -43,6 +44,9 @@
     - 다른 human_id면 409 (ADDRESS_ALREADY_BOUND)
   - 성공: WalletBinding 생성
   - 응답: { address, bound: true }
+- GET /api/wallet/bindings
+  - 검증: 세션 human_id 필요
+  - 응답: { wallets: WalletBinding[] }
 
 ## FE/BE 경계 (필수)
 - FE: Challenge 요청 + 서명 요청 + 결과 UI만 담당
@@ -99,8 +103,10 @@ export function requireHumanId() {
 
 ## DB 마이그레이션 (P0)
 Supabase SQL 스크립트 추가:
-- `db/001_create_siwe_challenge.sql`
-- `db/002_create_wallet_binding.sql`
+- `supabase/migrations/0002_create_siwe_challenge.sql`
+- `supabase/migrations/0003_create_wallet_binding.sql`
+스키마:
+- `gate.siwe_challenge`, `gate.wallet_binding`
 
 ## 도메인 구조 정의 (P1)
 - `domains/wallet.md` 참고
@@ -120,12 +126,14 @@ Supabase SQL 스크립트 추가:
 - BE: nonce 불일치/만료/재사용 → 4xx
 - BE: 주소 중복 바인딩 → 409
 - BE: 동일 human_id 재바인딩 → 200 (idempotent)
+- BE: GET /api/wallet/bindings → 현재 human_id의 지갑 목록 반환
 - FE: 성공/실패 상태 UI
 
 ## 완료 기준
 - SIWE 서명 검증 성공 시 바인딩 저장
 - 중복 주소 차단 동작
 - Challenge 만료/재사용 차단
+- 지갑 목록 조회 동작
 
 ---
 
