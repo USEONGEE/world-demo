@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyHuman } from '@/domains/human/server'
-import { successResponse, errorResponse, ErrorCodes, ApiError } from '@/core/api'
+import { handleApiError } from '@/core/api'
 import { setSessionCookie } from '@/core/session'
 import type { VerifyResponse } from '@/shared/contracts'
 
@@ -34,36 +34,6 @@ export async function POST(request: NextRequest) {
     console.log(`[${route}] → 200 OK`)
     return response
   } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[${route}] → ApiError:`, {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-      })
-
-      const statusMap: Record<string, number> = {
-        [ErrorCodes.VALIDATION_ERROR]: 400,
-        [ErrorCodes.VERIFICATION_FAILED]: 400,
-        [ErrorCodes.UNAUTHORIZED]: 401,
-        [ErrorCodes.CONFLICT]: 409,
-        [ErrorCodes.NOT_FOUND]: 404,
-        [ErrorCodes.INTERNAL_ERROR]: 500,
-      }
-
-      return errorResponse(
-        error.code,
-        error.message,
-        statusMap[error.code] ?? 500,
-        error.details
-      )
-    }
-
-    console.error(`[${route}] → Unexpected error:`, error)
-    console.error(`[${route}] → Stack:`, error instanceof Error ? error.stack : 'no stack')
-    return errorResponse(
-      ErrorCodes.INTERNAL_ERROR,
-      'An unexpected error occurred',
-      500
-    )
+    return handleApiError(error, route)
   }
 }

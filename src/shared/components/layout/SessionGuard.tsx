@@ -4,8 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useHuman } from '@/domains/human/client/hooks'
 import { LoadingScreen } from '@/shared/components/states'
-
-const PUBLIC_PATHS = new Set(['/','/home','/bridge','/consent'])
+import { isPublicRoute, shouldCheckSession } from '@/shared/guards/routes'
 
 export function SessionGuard({ children }: { children: ReactNode }) {
   const { isVerified, isHydrated, checkSession } = useHuman()
@@ -13,10 +12,15 @@ export function SessionGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
 
-  const isPublic = PUBLIC_PATHS.has(pathname)
+  const isPublic = isPublicRoute(pathname)
+  const needsSessionCheck = shouldCheckSession(pathname)
 
   useEffect(() => {
-    if (!isHydrated || isPublic) return
+    if (!isHydrated) return
+    if (!needsSessionCheck) {
+      setSessionChecked(true)
+      return
+    }
     let isMounted = true
     setSessionChecked(false)
     checkSession()
@@ -29,7 +33,7 @@ export function SessionGuard({ children }: { children: ReactNode }) {
     return () => {
       isMounted = false
     }
-  }, [checkSession, isHydrated, isPublic, pathname])
+  }, [checkSession, isHydrated, needsSessionCheck])
 
   useEffect(() => {
     if (!isPublic && sessionChecked && !isVerified) {

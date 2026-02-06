@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { consumeBridge } from '@/domains/bridge/server'
 import { BridgeConsumeRequestSchema } from '@/shared/contracts'
-import { errorResponse, ErrorCodes, ApiError } from '@/core/api'
+import { errorResponse, ErrorCodes, handleApiError } from '@/core/api'
 import { createSessionToken, setSessionCookie } from '@/core/session'
 import { checkRateLimit } from '@/core/rate-limit'
 import type { BridgeConsumeResponse } from '@/shared/contracts'
@@ -71,36 +71,6 @@ export async function POST(request: NextRequest) {
     console.log(`[${route}] → 200 OK`)
     return response
   } catch (error) {
-    if (error instanceof ApiError) {
-      console.error(`[${route}] → ApiError:`, {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-      })
-
-      const statusMap: Record<string, number> = {
-        [ErrorCodes.VALIDATION_ERROR]: 400,
-        [ErrorCodes.INVALID_BRIDGE_CODE]: 400,
-        [ErrorCodes.BRIDGE_EXPIRED]: 400,
-        [ErrorCodes.BRIDGE_ALREADY_USED]: 400,
-        [ErrorCodes.RATE_LIMITED]: 429,
-        [ErrorCodes.INTERNAL_ERROR]: 500,
-      }
-
-      return errorResponse(
-        error.code,
-        error.message,
-        statusMap[error.code] ?? 500,
-        error.details
-      )
-    }
-
-    console.error(`[${route}] → Unexpected error:`, error)
-    console.error(`[${route}] → Stack:`, error instanceof Error ? error.stack : 'no stack')
-    return errorResponse(
-      ErrorCodes.INTERNAL_ERROR,
-      'An unexpected error occurred',
-      500
-    )
+    return handleApiError(error, route)
   }
 }
