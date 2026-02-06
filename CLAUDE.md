@@ -121,6 +121,6 @@ Preview URL을 Developer Portal에 등록
 
 ## 현재 페이즈
 
-- **버전**: v0.0.3.3
-- **기능**: SessionGuard Refactor
-- **문서**: [docs/phases/v0.0.3.3-session-guard-refactor/](docs/phases/v0.0.3.3-session-guard-refactor/)
+- **버전**: v0.0.4
+- **기능**: Wallet 관리 UI + 상태 흐름
+- **문서**: [docs/phases/v0.0.4-wallet-management-ui/](docs/phases/v0.0.4-wallet-management-ui/)
