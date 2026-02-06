@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/shared/components/ui/Button'
@@ -12,16 +11,9 @@ import { cn } from '@/shared/utils'
 export function VerifyButton() {
   const t = useTranslations('verify')
   const isMiniKitInstalled = useMiniKitInstalled()
-  const { isHydrated, isVerified, humanId, checkSession } = useHuman()
+  const { isHydrated, isVerified, humanId } = useHuman()
   const { verify, isVerifying, error, status, isDuplicate } = useVerify()
   const router = useRouter()
-
-  // Check session on mount
-  useEffect(() => {
-    if (isHydrated) {
-      checkSession()
-    }
-  }, [isHydrated, checkSession])
 
   // Not hydrated yet - show nothing to avoid hydration mismatch
   if (!isHydrated) {

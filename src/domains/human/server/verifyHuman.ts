@@ -24,6 +24,51 @@ const log = (msg: string, data?: unknown) =>
 const logError = (msg: string, data?: unknown) =>
   console.error(`[verifyHuman] ${msg}`, data !== undefined ? data : '')
 
+async function verifyCloudProofWithRetry(params: {
+  proof: string
+  merkle_root: string
+  nullifier_hash: string
+  verification_level: VerificationLevel
+  appId: `app_${string}`
+  action: string
+  signal?: string
+}): Promise<IVerifyResponse> {
+  let lastError: Error | null = null
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    log(`verifyCloudProof attempt ${attempt + 1}/${MAX_RETRIES + 1}`)
+    try {
+      const response = await Promise.race([
+        verifyCloudProof(
+          {
+            proof: params.proof,
+            merkle_root: params.merkle_root,
+            nullifier_hash: params.nullifier_hash,
+            verification_level: params.verification_level,
+          },
+          params.appId,
+          params.action,
+          params.signal
+        ),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Verification timeout')), VERIFY_TIMEOUT)
+        ),
+      ])
+      log('verifyCloudProof response:', JSON.stringify(response))
+      return response
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error))
+      logError(`verifyCloudProof attempt ${attempt + 1} failed:`, lastError.message)
+      if (attempt < MAX_RETRIES) {
+        log('retrying in 1s...')
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+      }
+    }
+  }
+
+  throw lastError ?? new Error('Failed to verify proof')
+}
+
 /**
  * Verify World ID proof and create or retrieve human record
  */
@@ -73,45 +118,24 @@ export async function verifyHuman(payload: unknown): Promise<VerifyHumanResult> 
   const verificationLevel = (data.verification_level as VerificationLevel) ?? VerificationLevel.Device
   log('using verification_level:', verificationLevel)
 
-  let verifyResponse: IVerifyResponse | null = null
-  let lastError: Error | null = null
+  let verifyResponse: IVerifyResponse
 
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    log(`verifyCloudProof attempt ${attempt + 1}/${MAX_RETRIES + 1}`)
-    try {
-      verifyResponse = await Promise.race([
-        verifyCloudProof(
-          {
-            proof: data.proof,
-            merkle_root: data.merkle_root,
-            nullifier_hash: data.nullifier_hash,
-            verification_level: verificationLevel,
-          },
-          appId,
-          data.action,
-          data.signal
-        ),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Verification timeout')), VERIFY_TIMEOUT)
-        ),
-      ])
-      log('verifyCloudProof response:', JSON.stringify(verifyResponse))
-      break // Success, exit retry loop
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error))
-      logError(`verifyCloudProof attempt ${attempt + 1} failed:`, lastError.message)
-      if (attempt < MAX_RETRIES) {
-        log('retrying in 1s...')
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-      }
-    }
-  }
-
-  if (!verifyResponse) {
-    logError('all verifyCloudProof attempts failed, lastError:', lastError?.message)
+  try {
+    verifyResponse = await verifyCloudProofWithRetry({
+      proof: data.proof,
+      merkle_root: data.merkle_root,
+      nullifier_hash: data.nullifier_hash,
+      verification_level: verificationLevel,
+      appId,
+      action: data.action,
+      signal: data.signal,
+    })
+  } catch (error) {
+    const lastError = error instanceof Error ? error : new Error(String(error))
+    logError('all verifyCloudProof attempts failed, lastError:', lastError.message)
     throw new ApiError(
       ErrorCodes.VERIFICATION_FAILED,
-      lastError?.message ?? 'Failed to verify proof'
+      lastError.message ?? 'Failed to verify proof'
     )
   }
 

@@ -98,7 +98,7 @@ export const useHumanStore = create<HumanStore>()(
             const errorMessage = errorData.error?.message ?? 'Backend verification failed'
 
             // Check if it's a duplicate verification
-            if (errorData.error?.code === 'CONFLICT' || !errorData.is_new === false) {
+            if (errorData.error?.code === 'CONFLICT') {
               set({
                 isLoading: false,
                 error: null,
