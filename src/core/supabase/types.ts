@@ -96,6 +96,40 @@ export type Database = {
           }
         ]
       }
+      bridge_token: {
+        Row: {
+          id: string
+          human_id: string
+          code: string
+          expires_at: string
+          used: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          human_id: string
+          code: string
+          expires_at: string
+          used?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          human_id?: string
+          code?: string
+          expires_at?: string
+          used?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'bridge_token_human_id_fkey'
+            columns: ['human_id']
+            referencedRelation: 'human'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -120,3 +154,6 @@ export type SiweChallengeInsert = Database['gate']['Tables']['siwe_challenge']['
 
 export type WalletBinding = Database['gate']['Tables']['wallet_binding']['Row']
 export type WalletBindingInsert = Database['gate']['Tables']['wallet_binding']['Insert']
+
+export type BridgeToken = Database['gate']['Tables']['bridge_token']['Row']
+export type BridgeTokenInsert = Database['gate']['Tables']['bridge_token']['Insert']
