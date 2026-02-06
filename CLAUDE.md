@@ -100,8 +100,8 @@ Preview URL을 Developer Portal에 등록
 3. **Mini App URL**에 ngrok/Vercel URL 입력
 4. `.env.local`의 `NEXT_PUBLIC_WLD_APP_ID`를 Portal 발급값으로 설정
 
-### 로컬 브라우저 테스트 (AppGuard 비활성화)
-`src/app/(tabs)/layout.tsx`에서 `<AppGuard>` 주석 처리 후 브라우저에서 직접 테스트 가능
+### 로컬 브라우저 테스트
+AppGuard가 제거되어 브라우저에서 직접 테스트 가능 (MiniKit 미설치 환경에서도 페이지 접근 가능)
 
 ## 빌드/테스트 명령어
 
@@ -113,6 +113,8 @@ Preview URL을 Developer Portal에 등록
 
 | 버전 | 기능 | 문서 |
 |------|------|------|
+| v0.0.5 | MiniKit Kill Switch (전역 Guard 폐기) | [archive](docs/archive/v0.0.5-minikit-kill-switch/) |
+| v0.0.4.1 | Wallet Auth EIP-1271 Fix | [archive](docs/archive/v0.0.4.1-wallet-auth-eip1271-fix/) |
 | v0.0.4 | Wallet 관리 UI | [archive](docs/archive/v0.0.4-wallet-management-ui/) |
 | v0.0.3.2 | SessionGuard / 로그인 개선 | [archive](docs/archive/v0.0.3.2-session-guard-login/) |
 | v0.0.3.1 | Browser Wallet Bridge | [archive](docs/archive/v0.0.3.1-browser-wallet-bridge/) |
