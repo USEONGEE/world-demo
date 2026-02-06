@@ -48,8 +48,17 @@ Preview URL을 Developer Portal에 등록
 
 | 버전 | 기능 | 완료일 | 문서 |
 |------|------|--------|------|
+| v0.0.3 | SIWE Wallet Binding | 2026-02-06 | [archive](docs/archive/v0.0.3-siwe-wallet-binding/) |
 | v0.0.2 | World ID Verify | 2026-02-06 | [archive](docs/archive/v0.0.2-world-id-verify/) |
 | v0.0.1 | Foundation & Scaffolding | 2026-02-05 | [archive](docs/archive/v0.0.1-foundation-scaffolding/) |
+
+## 현재 페이즈
+
+- **버전**: v0.0.3.1
+- **기능**: Browser Wallet Bridge
+- **상태**: Step 5 완료 → Step 6 대기
+- **문서**: [docs/phases/v0.0.3.1-browser-wallet-bridge/](docs/phases/v0.0.3.1-browser-wallet-bridge/)
+- **시작일**: 2026-02-06
 
 ## 문서 현황
 
