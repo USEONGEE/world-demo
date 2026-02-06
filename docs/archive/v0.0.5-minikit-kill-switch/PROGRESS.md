@@ -26,3 +26,4 @@
 - AppGuard 완전 삭제 + NotInstalledScreen 삭제 + routes.ts 정리 + locale 정리
 - VerifyButton, WalletBindingButton, BridgeIssueCard는 이미 자체 fallback 구현 → 변경 불필요
 - pnpm build / tsc --noEmit 통과
+- 2026-02-06: `/wallet` 자동 Wallet Auth + 바인딩 스킵/자동 바인딩 플로우 추가

@@ -20,8 +20,8 @@
 
 ## MiniKit 접근
 
-- 기본: MiniKit 미설치 환경은 접근 불가
-- 예외: `/home`은 MiniKit 없이 접근 가능 (브라우저에서 브릿지 안내용)
+- 기본: MiniKit 미설치 환경도 접근 가능 (Kill Switch 전역 Guard 폐기)
+- MiniKit 필수 기능은 **컴포넌트/액션 단위**에서 비활성화 + 안내
 
 ## 세션 체크
 

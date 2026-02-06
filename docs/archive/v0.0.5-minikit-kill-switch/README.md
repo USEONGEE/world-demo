@@ -27,6 +27,7 @@
 - [x] MiniKit 설치 환경에서 기존 기능 정상 동작
 - [x] SessionGuard 정책 유지 (세션 없는 PROTECTED 경로 접근 → `/home` 리다이렉트)
 - [x] `pnpm build` 성공
+- [x] `/wallet` 진입 시 자동 Wallet Auth → 주소 비교 → 자동 바인딩/스킵 동작
 
 ## 제약사항
 - BE 변경 없음
@@ -34,3 +35,8 @@
 - 기능 플로우 변경 없음 (Verify, Wallet Auth, Bridge Issue 로직 동일)
 - URL 구조 변경 없음
 - i18n은 ko, en만 지원
+
+## 추가 변경사항
+- MiniKit 설치 환경에서 `/wallet` 자동 Wallet Auth 플로우 추가
+  - 주소 존재 + 이미 바인딩됨 → 바인딩 스킵
+  - 주소 없음/미바인딩 → Wallet Auth → SIWE 바인딩 자동 수행

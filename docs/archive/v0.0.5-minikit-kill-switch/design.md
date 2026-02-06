@@ -59,6 +59,25 @@
 - SessionGuard, SafeAreaLayout, MiniKitClientProvider
 - BE 코드 전체
 
+## 추가 설계: Wallet 탭 자동 Wallet Auth
+
+### 목표
+MiniKit 설치 환경에서 `/wallet` 진입 시 지갑 주소가 없으면 Wallet Auth를 강제하고,
+이미 바인딩된 주소는 자동으로 스킵, 미바인딩은 자동 바인딩한다.
+
+### 흐름
+1. `/wallet` 진입 시 지갑 목록 조회
+2. MiniKit 주소 존재 여부 확인
+   - 존재 + 목록에 있음 → 통과
+   - 존재 + 목록에 없음 → Wallet Auth 강제 → SIWE verify → 바인딩
+   - 미존재 → Wallet Auth 강제 → 주소 획득 → 목록 비교 후 바인딩/스킵
+3. 실패 시 재시도 UI 제공
+
+### 구현 포인트
+- Wallet Auth와 SIWE 바인딩을 분리 (request/verify 단계 분리)
+- `/wallet` 진입에서 자동 플로우 실행
+- 기존 WalletBindingButton은 수동 재시도/보조 UX로 유지
+
 ## 리스크
 
 | 리스크 | 영향 | 대응 |

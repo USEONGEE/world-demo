@@ -38,6 +38,13 @@
 - MiniKit 설치 시:
   - 기존 기능 그대로 동작
 
+### 추가 요구사항 (Wallet 탭 자동 Wallet Auth)
+- MiniKit 설치 환경에서 `/wallet` 진입 시:
+  - `MiniKit.user.walletAddress`가 없으면 Wallet Auth를 자동 시도
+  - Wallet Auth로 얻은 주소가 기존 지갑 목록에 있으면 **바인딩 스킵**
+  - 지갑 목록에 없으면 SIWE 바인딩 자동 수행
+  - 실패 시 재시도 UI 제공
+
 ## UX 가이드
 - 비활성 상태에서 명확한 메시지 표시
   - 예: “World App에서만 사용할 수 있습니다”
@@ -55,8 +62,12 @@
 2) MiniKit 미설치 환경에서 버튼 비활성 + 안내 노출
 3) MiniKit 설치 환경에서 기존 기능 정상 동작
 4) 세션 미존재 시 `/home` 리다이렉트 유지
+5) MiniKit 설치 + 지갑 주소 없음 → Wallet Auth 자동 실행
+6) MiniKit 주소가 이미 바인딩된 경우 → 바인딩 스킵
+7) 바인딩되지 않은 주소 → SIWE 바인딩 자동 수행
 
 ## 완료 기준
 - MiniKit 미설치 환경에서도 페이지 접근 차단 없음(세션 정책 제외)
 - MiniKit 기능만 Kill Switch로 안전하게 비활성화됨
 - 기존 MiniKit 기능 동작은 유지됨
+- `/wallet` 자동 Wallet Auth → 주소 비교 → 자동 바인딩/스킵 동작
