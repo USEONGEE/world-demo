@@ -9,6 +9,7 @@
     "home": "홈",
     "wallet": "지갑",
     "bridge": "브릿지",
+    "worker": "워커",
     "settings": "설정"
   },
   "consent": {
@@ -43,6 +44,19 @@
     "minikit_required": "World App에서 이 앱을 열어주세요",
     "bridge_cta": "브릿지 코드 입력",
     "bridge_cta_hint": "브라우저에서 지갑을 연결하려면 코드를 입력하세요"
+  },
+  "worker": {
+    "title": "워커 증명",
+    "description": "World ID proof payload를 생성하고 복사하세요.",
+    "verify_button": "Proof 생성",
+    "verifying": "생성 중...",
+    "payload_title": "Proof Payload",
+    "copy": "JSON 복사",
+    "copied": "복사됨",
+    "error": "인증 실패",
+    "retry": "다시 시도",
+    "minikit_required": "World App에서 이 앱을 열어주세요",
+    "error_unknown": "오류가 발생했습니다"
   },
   "wallet": {
     "button": "지갑 연결",

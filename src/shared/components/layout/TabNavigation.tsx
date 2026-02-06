@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { analytics } from '@/core/analytics'
+import { useMiniKitInstalled } from '@/core/minikit'
 import { cn } from '@/shared/utils'
 
 export function TabNavigation() {
@@ -12,6 +13,7 @@ export function TabNavigation() {
   const pathname = usePathname()
   const previousPath = useRef<string | null>(null)
   const [hasEthereum, setHasEthereum] = useState(false)
+  const isMiniKitInstalled = useMiniKitInstalled()
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -27,13 +29,17 @@ export function TabNavigation() {
         { href: '/settings', label: t('settings'), icon: '⚙️' },
       ]
 
+      if (isMiniKitInstalled) {
+        items.splice(1, 0, { href: '/worker', label: t('worker'), icon: '🧑‍💻' })
+      }
+
       if (hasEthereum) {
         items.splice(2, 0, { href: '/bridge', label: t('bridge'), icon: '🔗' })
       }
 
       return items
     },
-    [t, hasEthereum]
+    [t, hasEthereum, isMiniKitInstalled]
   )
 
   const normalizedPath = pathname === '/bridge/connect' ? '/bridge' : pathname

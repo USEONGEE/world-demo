@@ -7,10 +7,28 @@ export function useMiniKitInstalled() {
   const [isInstalled, setIsInstalled] = useState<boolean | null>(null)
 
   useEffect(() => {
-    const check = () => setIsInstalled(MiniKit.isInstalled())
+    let isMounted = true
+    let timer: ReturnType<typeof setInterval> | null = null
+
+    const check = () => {
+      try {
+        const installed = MiniKit.isInstalled()
+        if (isMounted) setIsInstalled(installed)
+        if (installed && timer) {
+          clearInterval(timer)
+          timer = null
+        }
+      } catch (error) {
+        if (isMounted) setIsInstalled(false)
+      }
+    }
+
     check()
-    const timer = setTimeout(check, 1000)
-    return () => clearTimeout(timer)
+    timer = setInterval(check, 1000)
+    return () => {
+      isMounted = false
+      if (timer) clearInterval(timer)
+    }
   }, [])
 
   return isInstalled

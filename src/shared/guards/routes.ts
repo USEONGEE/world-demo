@@ -1,4 +1,4 @@
-const PUBLIC_PATHS = ['/', '/home', '/bridge', '/consent'] as const
+const PUBLIC_PATHS = ['/', '/home', '/bridge', '/consent', '/worker'] as const
 const SESSION_CHECK_PATHS = ['/home', '/bridge'] as const
 
 function normalizePath(pathname: string | null): string {

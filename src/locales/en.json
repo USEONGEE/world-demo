@@ -9,6 +9,7 @@
     "home": "Home",
     "wallet": "Wallet",
     "bridge": "Bridge",
+    "worker": "Worker",
     "settings": "Settings"
   },
   "consent": {
@@ -43,6 +44,19 @@
     "minikit_required": "Please open this app in World App",
     "bridge_cta": "Enter bridge code",
     "bridge_cta_hint": "Use this on a desktop browser to connect your wallet"
+  },
+  "worker": {
+    "title": "Worker Proof",
+    "description": "Generate and copy your World ID proof payload.",
+    "verify_button": "Generate Proof",
+    "verifying": "Generating...",
+    "payload_title": "Proof Payload",
+    "copy": "Copy JSON",
+    "copied": "Copied",
+    "error": "Verification Failed",
+    "retry": "Try Again",
+    "minikit_required": "Please open this app in World App",
+    "error_unknown": "An error occurred"
   },
   "wallet": {
     "button": "Connect Wallet",
