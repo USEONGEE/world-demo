@@ -156,7 +156,7 @@ async function verifyHuman() {
   if (!MiniKit.isInstalled()) return
 
   const verifyPayload: VerifyCommandInput = {
-    action: 'verify-human',
+    action: 'verify_human',
     verification_level: 'orb',
   }
 

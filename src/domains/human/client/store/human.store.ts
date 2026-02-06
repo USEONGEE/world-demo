@@ -8,7 +8,7 @@ import type { HumanState, VerifyStatus } from '../../types'
 import type { VerifyResponse, HumanMeResponse } from '@/shared/contracts'
 
 // World ID action name
-const VERIFY_ACTION = 'verify-human'
+const VERIFY_ACTION = 'verify_human'
 
 // Timeout for verify command (10 seconds)
 const VERIFY_TIMEOUT = 10000
