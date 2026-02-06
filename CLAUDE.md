@@ -1,24 +1,78 @@
 # World Mini-App 개발 규칙
 
-## 필수
-- 모든 검증은 백엔드에서 수행 (Frontend payload 신뢰 금지)
-- Mobile-first: Tab 네비게이션, 초기 로딩 2-3초, 이후 <1초
-- 사용자 자산 컨트랙트는 Immutable, 테스트 커버리지 ≥90%
-
-## 금지
+## 금지 사항
 - "official" 표현, World 로고 사용, 운 기반 게임, 토큰 pre-sale
-- **git push 임의 실행 금지** - 반드시 사용자 승인 후 push
+- **git push 임의 실행 금지** — 반드시 사용자 승인 후 push
 
-## i18n
-- 관리 대상 locale: **ko, en** 만 (나머지 locale 파일은 수정하지 않음)
-- 위치: `src/locales/{ko,en}.json`
+## 인증/세션
+
+- World ID verify는 로그인이 아니라 **1회 신원 증명**
+- 세션 유실 시 재-verify 가능, `max_verifications_reached` → "이미 인증됨"으로 세션 재발급
+- 로그인 유지 기준: `wg_session` HTTP-Only 쿠키
+- 세션 검증: `GET /api/human/me`
+
+## Guard 정책
+
+- 경로 정책은 **중앙화된 함수**로만 관리 (`src/shared/guards/routes.ts`)
+- PUBLIC: `/`, `/home`, `/bridge`, `/consent`
+- PROTECTED: 그 외 전부 (`/wallet`, `/settings`, `/bridge/connect` 등)
+- 세션 없이 PROTECTED 접근 → `/home`으로 리다이렉트
+
+## MiniKit 접근
+
+- 기본: MiniKit 미설치 환경은 접근 불가
+- 예외: `/home`은 MiniKit 없이 접근 가능 (브라우저에서 브릿지 안내용)
+
+## 세션 체크
+
+- 전역 `SessionGuard`가 **단 한번만** 수행
+- 개별 페이지에서 중복 체크 금지 (VerifyButton, /bridge/connect 등에서 제거됨)
+
+## 브릿지 흐름
+
+- 코드 발급: MiniApp + 세션 필수 (`/api/bridge/issue`)
+- 코드 입력: 브라우저 `/bridge`에서만 가능
+- `/bridge/connect`는 세션 필수
+- 브라우저 로그인 유도: `/home` → `/bridge` 버튼
+
+## API 에러 처리
+
+- 모든 에러는 **`handleApiError()`로 통일** 처리 (`src/core/api/handleError.ts`)
+- 응답 포맷: `{ error: { code, message, details }, timestamp, requestId }`
+- 개별 라우트에서 statusMap 금지, 공통 매핑 사용
 
 ## World ID Action
-- `MiniKit.commandsAsync.verify()`의 `action` 파라미터는 **Developer Portal에 미리 등록**해야 함
-- 등록 위치: Developer Portal → 앱 선택 → Actions → Create Action
-- Action 이름에 **하이픈(`-`) 사용 불가** ("common characters"만 허용) → 언더스코어(`_`) 사용
-- `verifyCloudProof()` 호출 시 `app_id + action` 조합으로 유효성 검증됨
-- 미등록 시 `invalid_action` / `Action not found.` 에러 발생
+
+- action 값은 **Developer Portal에 등록된 이름**만 사용
+- 하이픈(`-`) 금지, 언더스코어(`_`) 사용
+- `app_id + action` 조합 불일치 → `invalid_action` 에러
+
+## DB/Schema
+
+- 스키마: `gate` (`.schema('gate')`)
+- Supabase API schemas에 `gate` 포함 필요 (`supabase/config.toml`)
+- 마이그레이션: `supabase/migrations/`, 버전 `0000_`, `0001_` 순차
+
+## i18n
+
+- 지원 locale: **ko, en** 만 (다른 locale 추가 금지)
+- 위치: `src/locales/{ko,en}.json`
+
+## FE/BE 경계
+
+- FE: 요청/표시만 담당
+- 검증/권한/DB 처리 **모두 BE 전담**
+- Frontend payload 신뢰 금지
+
+## 보안
+
+- 브릿지 코드: 1회성 + TTL, 모든 검증은 서버에서만 수행
+- 사용자 자산 컨트랙트: Immutable, 테스트 커버리지 ≥90%
+
+## 문서
+
+- Phase 문서: `docs/phases/vX.Y.Z-feature-name/`
+- 완료된 Phase: `docs/archive/vX.Y.Z-feature-name/`
 
 ## 개발 환경 테스트
 
@@ -49,31 +103,24 @@ Preview URL을 Developer Portal에 등록
 ### 로컬 브라우저 테스트 (AppGuard 비활성화)
 `src/app/(tabs)/layout.tsx`에서 `<AppGuard>` 주석 처리 후 브라우저에서 직접 테스트 가능
 
-## DB 마이그레이션
+## 빌드/테스트 명령어
 
-- **스키마**: `gate` (모든 테이블은 `gate` 스키마 사용, `.schema('gate')`)
-- 위치: `supabase/migrations/`
-- 버전 규칙: `0000_`, `0001_`, `0002_` 순차 번호
-- 실행: `supabase db push` 또는 Supabase Dashboard에서 직접 실행
+- `pnpm dev` — 개발 서버
+- `pnpm build` — 프로덕션 빌드
+- `npx tsc --noEmit` — 타입 체크
 
 ## 완료된 기능
 
-| 버전 | 기능 | 완료일 | 문서 |
-|------|------|--------|------|
-| v0.0.3 | SIWE Wallet Binding | 2026-02-06 | [archive](docs/archive/v0.0.3-siwe-wallet-binding/) |
-| v0.0.2 | World ID Verify | 2026-02-06 | [archive](docs/archive/v0.0.2-world-id-verify/) |
-| v0.0.1 | Foundation & Scaffolding | 2026-02-05 | [archive](docs/archive/v0.0.1-foundation-scaffolding/) |
+| 버전 | 기능 | 문서 |
+|------|------|------|
+| v0.0.3.2 | SessionGuard / 로그인 개선 | [archive](docs/archive/v0.0.3.2-session-guard-login/) |
+| v0.0.3.1 | Browser Wallet Bridge | [archive](docs/archive/v0.0.3.1-browser-wallet-bridge/) |
+| v0.0.3 | SIWE Wallet Binding | [archive](docs/archive/v0.0.3-siwe-wallet-binding/) |
+| v0.0.2 | World ID Verify | [archive](docs/archive/v0.0.2-world-id-verify/) |
+| v0.0.1 | Foundation & Scaffolding | [archive](docs/archive/v0.0.1-foundation-scaffolding/) |
 
 ## 현재 페이즈
 
-- **버전**: v0.0.3.1
-- **기능**: Browser Wallet Bridge
-- **상태**: Step 6 완료 → 아카이브 대기
-- **문서**: [docs/phases/v0.0.3.1-browser-wallet-bridge/](docs/phases/v0.0.3.1-browser-wallet-bridge/)
-- **시작일**: 2026-02-06
-
-## 문서 현황
-
-- `docs/guide/` 문서들은 임시로 생성하지 않음 (changelog.md만 존재)
-- Phase 문서: `docs/phases/vX.Y.Z-feature-name/`
-- 완료된 Phase: `docs/archive/vX.Y.Z-feature-name/`
+- **버전**: v0.0.3.3
+- **기능**: SessionGuard Refactor
+- **문서**: [docs/phases/v0.0.3.3-session-guard-refactor/](docs/phases/v0.0.3.3-session-guard-refactor/)
