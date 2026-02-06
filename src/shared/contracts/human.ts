@@ -9,7 +9,7 @@ export const VerifyPayloadSchema = z
     nullifier_hash: z.string().min(1, 'nullifier_hash is required'),
     // Optional fields from MiniKit
     status: z.enum(['success', 'error']).optional(),
-    verification_level: z.enum(['orb', 'device']).optional(),
+    verification_level: z.enum(['orb', 'device', 'secure_document']).optional(),
     signal: z.string().optional(),
   })
   .passthrough() // Allow extra fields
