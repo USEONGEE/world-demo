@@ -11,6 +11,12 @@ const API_TIMEOUT = 10000
 
 // SIWE statement
 const SIWE_STATEMENT = 'Sign in to World Gate to link your wallet'
+const FALLBACK_ADDRESS = '0x0000000000000000000000000000000000000000'
+
+function extractAddressFromMessage(message: string): string | null {
+  const match = message.match(/0x[a-fA-F0-9]{40}/)
+  return match ? match[0] : null
+}
 
 interface WalletStore extends WalletState {}
 
@@ -73,11 +79,9 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         throw new Error('MiniKit is not installed')
       }
 
-      // Get wallet address from MiniKit user
+      // Get wallet address from MiniKit user (may be unavailable until Wallet Auth runs)
       const walletAddress = MiniKit.user?.walletAddress
-      if (!walletAddress) {
-        throw new Error('No wallet address available')
-      }
+      const challengeAddress = walletAddress ?? FALLBACK_ADDRESS
 
       // 2. Request challenge
       const challengeController = new AbortController()
@@ -86,7 +90,7 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
       const challengeResponse = await fetch('/api/siwe/challenge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address: walletAddress }),
+        body: JSON.stringify({ address: challengeAddress }),
         signal: challengeController.signal,
       }).finally(() => clearTimeout(challengeTimeout))
 
@@ -99,7 +103,7 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
 
       analytics.track({
         name: 'siwe_challenge_issued',
-        properties: { address: walletAddress },
+        properties: { address: walletAddress ?? challengeAddress },
         timestamp: new Date(),
       })
 
@@ -124,9 +128,12 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         throw new Error(String(finalPayload.status ?? 'Signing failed'))
       }
 
+      const resolvedAddress =
+        walletAddress ?? extractAddressFromMessage(finalPayload.message) ?? challengeAddress
+
       analytics.track({
         name: 'siwe_sign_success',
-        properties: { address: walletAddress },
+        properties: { address: resolvedAddress },
         timestamp: new Date(),
       })
 
@@ -156,7 +163,7 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
 
         analytics.track({
           name: 'wallet_bind_fail',
-          properties: { reason: errorCode ?? errorMessage, address: walletAddress },
+          properties: { reason: errorCode ?? errorMessage, address: walletAddress ?? challengeAddress },
           timestamp: new Date(),
         })
 
