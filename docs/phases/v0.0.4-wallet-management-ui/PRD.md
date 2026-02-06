@@ -6,8 +6,8 @@
 
 ## 범위
 - FE: 지갑 목록 화면, 상태 배지, 복사/검증 완료 표시
-- FE: 인증 미완료 상태 가이드(Verify 버튼로 유도)
-- FE: “내 세금 리포트 보기” 비활성 버튼 표시
+- FE: 세션 없음은 SessionGuard가 /home으로 리다이렉트
+- FE: “내 세금 리포트 보기”는 비범위 또는 차기 Phase로 이관
 - BE: 지갑 목록 조회 API
 
 ## 비범위
@@ -24,18 +24,18 @@
 - 지갑 목록 카드/리스트 UI
 - 주소 축약 표시 및 전체 복사 기능
 - 상태(verified) 표시
-- 인증 미완료 시 안내 배너 + Verify 버튼
+- 세션 없음은 SessionGuard가 /home으로 리다이렉트
 - 실패/빈 상태 UI
 
 ### BE
-- GET /api/wallets
+- GET /api/wallet/bindings
   - 세션 기반 human_id 필수
   - 응답: [{ address, chain, verified_at, verification_method }]
 
 ## FE/BE 경계 (필수)
 - FE: 지갑 목록 조회 호출 + 표시 UI만 담당
 - BE: 세션 검증 + 지갑 조회 + 응답 스키마 보장 전담
-- `app/api/wallets`는 컨트롤러 역할만 수행 (도메인 호출)
+- `app/api/wallet/bindings`는 컨트롤러 역할만 수행 (도메인 호출)
 
 #### 응답 스키마 (P1)
 **200 OK**
@@ -74,8 +74,8 @@
 
 ## 완료 기준
 - 지갑 목록 화면에서 바인딩 결과 확인 가능
-- 인증 미완료 상태에서 올바른 유도 동작
-- "내 세금 리포트 보기" 비활성 표시
+- 세션 없을 때 /home으로 리다이렉트
+- "내 세금 리포트 보기"는 비범위로 처리하거나 별도 Phase로 이관
 
 ---
 
@@ -141,7 +141,7 @@ import { Button, Card, TabBar } from '@worldcoin/mini-apps-ui-kit-react'
 
 | 상태 | UI 처리 |
 |------|---------|
-| 인증 미완료 | Verify 버튼으로 유도하는 배너 표시 |
+| 세션 없음 | SessionGuard가 /home으로 리다이렉트 |
 | 인증 완료 + 지갑 없음 | 지갑 바인딩 유도 |
 | 인증 완료 + 지갑 있음 | 지갑 목록 표시 |
 | 로딩 중 | 스켈레톤 UI (타임아웃 처리) |
