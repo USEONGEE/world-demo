@@ -113,6 +113,7 @@ Preview URL을 Developer Portal에 등록
 
 | 버전 | 기능 | 문서 |
 |------|------|------|
+| v0.0.4 | Wallet 관리 UI | [archive](docs/archive/v0.0.4-wallet-management-ui/) |
 | v0.0.3.2 | SessionGuard / 로그인 개선 | [archive](docs/archive/v0.0.3.2-session-guard-login/) |
 | v0.0.3.1 | Browser Wallet Bridge | [archive](docs/archive/v0.0.3.1-browser-wallet-bridge/) |
 | v0.0.3 | SIWE Wallet Binding | [archive](docs/archive/v0.0.3-siwe-wallet-binding/) |
@@ -121,6 +122,4 @@ Preview URL을 Developer Portal에 등록
 
 ## 현재 페이즈
 
-- **버전**: v0.0.4
-- **기능**: Wallet 관리 UI + 상태 흐름
-- **문서**: [docs/phases/v0.0.4-wallet-management-ui/](docs/phases/v0.0.4-wallet-management-ui/)
+없음
