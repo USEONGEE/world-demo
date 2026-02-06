@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { analytics } from '@/core/analytics'
 import { Card } from '@/shared/components/ui/Card'
@@ -25,6 +26,7 @@ function formatDate(dateString: string): string {
 
 export function WalletList() {
   const t = useTranslations('wallet')
+  const router = useRouter()
   const { wallets, isLoading, error, fetchWallets } = useWalletBinding()
   const [copiedAddress, setCopiedAddress] = useState<string | null>(null)
 
@@ -44,6 +46,10 @@ export function WalletList() {
       timestamp: new Date(),
     })
   }, [])
+
+  const handleOpenTax = useCallback((address: string) => {
+    router.push(`/tax?address=${encodeURIComponent(address)}`)
+  }, [router])
 
   // Track wallet list view once when wallets are loaded (even if empty)
   const hasTrackedView = useRef(false)
@@ -111,7 +117,19 @@ export function WalletList() {
       <h3 className="text-lg font-medium text-gray-900">{t('connected_wallets')}</h3>
       <div className="space-y-2">
         {wallets.map((wallet) => (
-          <Card key={`${wallet.chain}-${wallet.address}`} className="flex items-center justify-between">
+          <Card
+            key={`${wallet.chain}-${wallet.address}`}
+            className="flex items-center justify-between cursor-pointer hover:border-gray-300"
+            role="button"
+            tabIndex={0}
+            onClick={() => handleOpenTax(wallet.address)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault()
+                handleOpenTax(wallet.address)
+              }
+            }}
+          >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
                 <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -128,10 +146,14 @@ export function WalletList() {
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                   {t('verified')} · {wallet.verification_method}
                 </span>
+                <p className="text-xs text-blue-600 mt-1">{t('view_tax_hint')}</p>
               </div>
             </div>
             <button
-              onClick={() => handleCopyAddress(wallet.address)}
+              onClick={(event) => {
+                event.stopPropagation()
+                handleCopyAddress(wallet.address)
+              }}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
               title={copiedAddress === wallet.address ? t('copied') : t('copy_address')}
             >

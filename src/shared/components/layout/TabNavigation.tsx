@@ -42,7 +42,10 @@ export function TabNavigation() {
     [t, hasEthereum, isMiniKitInstalled]
   )
 
-  const normalizedPath = pathname === '/bridge/connect' ? '/bridge' : pathname
+  const normalizedPath =
+    pathname === '/bridge/connect' ? '/bridge'
+      : pathname === '/tax' ? '/wallet'
+        : pathname
 
   useEffect(() => {
     const currentTab = tabs.find((tab) => tab.href === normalizedPath)
