@@ -64,7 +64,12 @@
     "minikit_required": "Please open this app in World App",
     "no_wallets": "No wallets connected yet",
     "connected_wallets": "Connected Wallets",
-    "verified_on": "Verified on"
+    "verified_on": "Verified on",
+    "copy_address": "Copy address",
+    "copied": "Copied",
+    "verified": "Verified",
+    "fetch_error": "Failed to load wallet list",
+    "timeout_hint": "The network is slow or unstable. Please try again shortly."
   },
   "bridge": {
     "issue_button": "Connect Wallet via Browser",

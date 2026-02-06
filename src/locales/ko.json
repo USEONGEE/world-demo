@@ -64,7 +64,12 @@
     "minikit_required": "World App에서 이 앱을 열어주세요",
     "no_wallets": "연결된 지갑이 없습니다",
     "connected_wallets": "연결된 지갑",
-    "verified_on": "인증일"
+    "verified_on": "인증일",
+    "copy_address": "주소 복사",
+    "copied": "복사됨",
+    "verified": "인증됨",
+    "fetch_error": "지갑 목록을 불러올 수 없습니다",
+    "timeout_hint": "네트워크가 느리거나 연결이 불안정합니다. 잠시 후 다시 시도하세요"
   },
   "bridge": {
     "issue_button": "브라우저로 지갑 연결",
