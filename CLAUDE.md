@@ -13,6 +13,13 @@
 - 관리 대상 locale: **ko, en** 만 (나머지 locale 파일은 수정하지 않음)
 - 위치: `src/locales/{ko,en}.json`
 
+## World ID Action
+- `MiniKit.commandsAsync.verify()`의 `action` 파라미터는 **Developer Portal에 미리 등록**해야 함
+- 등록 위치: Developer Portal → 앱 선택 → Actions → Create Action
+- Action 이름에 **하이픈(`-`) 사용 불가** ("common characters"만 허용) → 언더스코어(`_`) 사용
+- `verifyCloudProof()` 호출 시 `app_id + action` 조합으로 유효성 검증됨
+- 미등록 시 `invalid_action` / `Action not found.` 에러 발생
+
 ## 개발 환경 테스트
 
 World MiniApp은 World App 내부에서 실행됨. localhost 직접 접근 불가.
@@ -44,6 +51,7 @@ Preview URL을 Developer Portal에 등록
 
 ## DB 마이그레이션
 
+- **스키마**: `gate` (모든 테이블은 `gate` 스키마 사용, `.schema('gate')`)
 - 위치: `supabase/migrations/`
 - 버전 규칙: `0000_`, `0001_`, `0002_` 순차 번호
 - 실행: `supabase db push` 또는 Supabase Dashboard에서 직접 실행
