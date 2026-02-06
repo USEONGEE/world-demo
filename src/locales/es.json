@@ -44,5 +44,22 @@
     "error": "Verificación fallida",
     "retry": "Reintentar",
     "minikit_required": "Por favor abre esta app en World App"
+  },
+  "wallet": {
+    "button": "Conectar billetera",
+    "description": "Vincula tu billetera a tu identidad verificada",
+    "loading": "Conectando...",
+    "signing": "Firma en World App...",
+    "verifying": "Verificando firma...",
+    "wallet_connected": "Billetera conectada",
+    "wallet_connected_message": "Tu billetera ha sido vinculada exitosamente",
+    "error": "Conexión fallida",
+    "retry": "Reintentar",
+    "login_required": "Verificación requerida",
+    "login_required_message": "Por favor verifica como humano primero",
+    "minikit_required": "Por favor abre esta app en World App",
+    "no_wallets": "No hay billeteras conectadas",
+    "connected_wallets": "Billeteras conectadas",
+    "verified_on": "Verificado el"
   }
 }

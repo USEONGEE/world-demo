@@ -44,5 +44,22 @@
     "error": "Verificação falhou",
     "retry": "Tentar novamente",
     "minikit_required": "Por favor abra este app no World App"
+  },
+  "wallet": {
+    "button": "Conectar carteira",
+    "description": "Vincule sua carteira à sua identidade verificada",
+    "loading": "Conectando...",
+    "signing": "Assine no World App...",
+    "verifying": "Verificando assinatura...",
+    "wallet_connected": "Carteira conectada",
+    "wallet_connected_message": "Sua carteira foi vinculada com sucesso",
+    "error": "Conexão falhou",
+    "retry": "Tentar novamente",
+    "login_required": "Verificação necessária",
+    "login_required_message": "Por favor verifique como humano primeiro",
+    "minikit_required": "Por favor abra este app no World App",
+    "no_wallets": "Nenhuma carteira conectada",
+    "connected_wallets": "Carteiras conectadas",
+    "verified_on": "Verificado em"
   }
 }

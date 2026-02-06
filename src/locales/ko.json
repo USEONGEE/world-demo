@@ -44,5 +44,22 @@
     "error": "인증 실패",
     "retry": "다시 시도",
     "minikit_required": "World App에서 이 앱을 열어주세요"
+  },
+  "wallet": {
+    "button": "지갑 연결",
+    "description": "검증된 신원에 지갑을 연결하세요",
+    "loading": "연결 중...",
+    "signing": "World App에서 서명하세요...",
+    "verifying": "서명 확인 중...",
+    "wallet_connected": "지갑 연결됨",
+    "wallet_connected_message": "지갑이 성공적으로 연결되었습니다",
+    "error": "연결 실패",
+    "retry": "다시 시도",
+    "login_required": "인증 필요",
+    "login_required_message": "먼저 사람 인증을 해주세요",
+    "minikit_required": "World App에서 이 앱을 열어주세요",
+    "no_wallets": "연결된 지갑이 없습니다",
+    "connected_wallets": "연결된 지갑",
+    "verified_on": "인증일"
   }
 }

@@ -44,5 +44,22 @@
     "error": "認証失敗",
     "retry": "再試行",
     "minikit_required": "World Appでこのアプリを開いてください"
+  },
+  "wallet": {
+    "button": "ウォレットを接続",
+    "description": "認証済みIDにウォレットをリンク",
+    "loading": "接続中...",
+    "signing": "World Appで署名してください...",
+    "verifying": "署名を確認中...",
+    "wallet_connected": "ウォレット接続済み",
+    "wallet_connected_message": "ウォレットが正常にリンクされました",
+    "error": "接続失敗",
+    "retry": "再試行",
+    "login_required": "認証が必要です",
+    "login_required_message": "まず人間として認証してください",
+    "minikit_required": "World Appでこのアプリを開いてください",
+    "no_wallets": "接続されたウォレットはありません",
+    "connected_wallets": "接続されたウォレット",
+    "verified_on": "認証日"
   }
 }

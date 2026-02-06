@@ -44,5 +44,22 @@
     "error": "Verification Failed",
     "retry": "Try Again",
     "minikit_required": "Please open this app in World App"
+  },
+  "wallet": {
+    "button": "Connect Wallet",
+    "description": "Link your wallet to your verified identity",
+    "loading": "Connecting...",
+    "signing": "Sign in World App...",
+    "verifying": "Verifying signature...",
+    "wallet_connected": "Wallet Connected",
+    "wallet_connected_message": "Your wallet has been linked successfully",
+    "error": "Connection Failed",
+    "retry": "Try Again",
+    "login_required": "Verification Required",
+    "login_required_message": "Please verify as human first",
+    "minikit_required": "Please open this app in World App",
+    "no_wallets": "No wallets connected yet",
+    "connected_wallets": "Connected Wallets",
+    "verified_on": "Verified on"
   }
 }
