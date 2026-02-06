@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifySiwe } from '@/domains/wallet/server'
 import { SiweVerifyRequestSchema } from '@/shared/contracts'
-import { errorResponse, ErrorCodes, handleApiError } from '@/core/api'
+import { ApiError, ErrorCodes, handleApiError } from '@/core/api'
 import { getSession } from '@/core/session'
 import type { SiweVerifyResponse } from '@/shared/contracts'
 
@@ -18,11 +18,7 @@ export async function POST(request: NextRequest) {
 
     if (!session) {
       console.log(`[${route}] → 401 no session`)
-      return errorResponse(
-        ErrorCodes.UNAUTHORIZED,
-        'Session required',
-        401
-      )
+      throw new ApiError(ErrorCodes.UNAUTHORIZED, 'Session required')
     }
 
     // 2. Parse and validate request body
@@ -32,10 +28,9 @@ export async function POST(request: NextRequest) {
 
     if (!parseResult.success) {
       console.error(`[${route}] → 400 validation:`, parseResult.error.flatten())
-      return errorResponse(
+      throw new ApiError(
         ErrorCodes.VALIDATION_ERROR,
         'Invalid request',
-        400,
         parseResult.error.flatten()
       )
     }

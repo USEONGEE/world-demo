@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { listWallets } from '@/domains/wallet/server'
-import { errorResponse, ErrorCodes, handleApiError } from '@/core/api'
+import { ApiError, ErrorCodes, handleApiError } from '@/core/api'
 import { getSession } from '@/core/session'
 import type { WalletsResponse } from '@/shared/contracts'
 
@@ -17,11 +17,7 @@ export async function GET(request: NextRequest) {
 
     if (!session) {
       console.log(`[${route}] → 401 no session`)
-      return errorResponse(
-        ErrorCodes.UNAUTHORIZED,
-        'Session required',
-        401
-      )
+      throw new ApiError(ErrorCodes.UNAUTHORIZED, 'Session required')
     }
 
     // 2. Get wallet bindings

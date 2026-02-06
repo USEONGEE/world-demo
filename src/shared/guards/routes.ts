@@ -1,5 +1,5 @@
 const PUBLIC_PATHS = ['/', '/home', '/bridge', '/consent'] as const
-const SESSION_CHECK_PATHS = ['/home'] as const
+const SESSION_CHECK_PATHS = ['/home', '/bridge'] as const
 
 function normalizePath(pathname: string | null): string {
   if (!pathname) return '/'

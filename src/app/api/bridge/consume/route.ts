@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { consumeBridge } from '@/domains/bridge/server'
 import { BridgeConsumeRequestSchema } from '@/shared/contracts'
-import { errorResponse, ErrorCodes, handleApiError } from '@/core/api'
+import { ApiError, ErrorCodes, handleApiError } from '@/core/api'
 import { createSessionToken, setSessionCookie } from '@/core/session'
 import { checkRateLimit } from '@/core/rate-limit'
 import type { BridgeConsumeResponse } from '@/shared/contracts'
@@ -32,10 +32,9 @@ export async function POST(request: NextRequest) {
 
     if (!parseResult.success) {
       console.error(`[${route}] → 400 validation:`, parseResult.error.flatten())
-      return errorResponse(
+      throw new ApiError(
         ErrorCodes.VALIDATION_ERROR,
         'Invalid request',
-        400,
         parseResult.error.flatten()
       )
     }
@@ -48,10 +47,9 @@ export async function POST(request: NextRequest) {
     const ipLimit = checkRateLimit(ipKey, 10, 10 * 60 * 1000)
     if (!ipLimit.allowed) {
       console.log(`[${route}] → 429 rate limited, resetAt=${new Date(ipLimit.resetAt).toISOString()}`)
-      return errorResponse(
+      throw new ApiError(
         ErrorCodes.RATE_LIMITED,
         'Too many requests',
-        429,
         { reset_at: new Date(ipLimit.resetAt).toISOString() }
       )
     }

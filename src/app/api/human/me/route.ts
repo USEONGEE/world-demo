@@ -1,5 +1,5 @@
 import { getCurrentHuman } from '@/domains/human/server'
-import { successResponse, errorResponse, ErrorCodes } from '@/core/api'
+import { ApiError, ErrorCodes, handleApiError, successResponse } from '@/core/api'
 import type { HumanMeResponse } from '@/shared/contracts'
 
 // Force dynamic rendering
@@ -14,11 +14,7 @@ export async function GET() {
 
     if (!human) {
       console.log(`[${route}] → 401 no valid session`)
-      return errorResponse(
-        ErrorCodes.UNAUTHORIZED,
-        'No valid session',
-        401
-      )
+      throw new ApiError(ErrorCodes.UNAUTHORIZED, 'No valid session')
     }
 
     console.log(`[${route}] → 200 human_id=${human.human_id}`)
@@ -29,12 +25,6 @@ export async function GET() {
 
     return successResponse(response)
   } catch (error) {
-    console.error(`[${route}] → Unexpected error:`, error)
-    console.error(`[${route}] → Stack:`, error instanceof Error ? error.stack : 'no stack')
-    return errorResponse(
-      ErrorCodes.INTERNAL_ERROR,
-      'An unexpected error occurred',
-      500
-    )
+    return handleApiError(error, route)
   }
 }

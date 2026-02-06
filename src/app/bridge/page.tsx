@@ -6,12 +6,13 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/shared/components/ui/Button'
 import { Card } from '@/shared/components/ui/Card'
 import { analytics } from '@/core/analytics'
+import { useHuman } from '@/domains/human/client/hooks'
 
 function BridgeCodeForm() {
   const t = useTranslations('bridge')
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [hasSession, setHasSession] = useState<boolean | null>(null)
+  const { isVerified, isHydrated } = useHuman()
 
   const initialCode = searchParams.get('code') ?? ''
   const normalizedInitial = useMemo(() => {
@@ -26,28 +27,13 @@ function BridgeCodeForm() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    let isMounted = true
-    async function checkSession() {
-      try {
-        const res = await fetch('/api/human/me')
-        if (!isMounted) return
-        if (res.ok) {
-          router.replace('/bridge/connect')
-          return
-        }
-        setHasSession(false)
-      } catch {
-        if (!isMounted) return
-        setHasSession(false)
-      }
+    if (!isHydrated) return
+    if (isVerified) {
+      router.replace('/bridge/connect')
     }
-    checkSession()
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  }, [isHydrated, isVerified, router])
 
-  if (hasSession === null) {
+  if (!isHydrated || isVerified) {
     return (
       <Card>
         <div className="flex items-center justify-center py-8">

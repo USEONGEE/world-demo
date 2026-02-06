@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { issueBridge } from '@/domains/bridge/server'
-import { errorResponse, ErrorCodes, handleApiError } from '@/core/api'
+import { ApiError, ErrorCodes, handleApiError } from '@/core/api'
 import { getSession } from '@/core/session'
 import { checkRateLimit } from '@/core/rate-limit'
 import type { BridgeIssueResponse } from '@/shared/contracts'
@@ -30,11 +30,7 @@ export async function POST(request: NextRequest) {
 
     if (!session) {
       console.log(`[${route}] → 401 no session`)
-      return errorResponse(
-        ErrorCodes.UNAUTHORIZED,
-        'Session required',
-        401
-      )
+      throw new ApiError(ErrorCodes.UNAUTHORIZED, 'Session required')
     }
 
     const clientIp = getClientIp(request)
@@ -43,10 +39,9 @@ export async function POST(request: NextRequest) {
     const limit = checkRateLimit(rateKey, 5, 10 * 60 * 1000)
     if (!limit.allowed) {
       console.log(`[${route}] → 429 rate limited, resetAt=${new Date(limit.resetAt).toISOString()}`)
-      return errorResponse(
+      throw new ApiError(
         ErrorCodes.RATE_LIMITED,
         'Too many requests',
-        429,
         { reset_at: new Date(limit.resetAt).toISOString() }
       )
     }
