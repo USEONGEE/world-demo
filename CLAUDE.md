@@ -9,6 +9,10 @@
 - "official" 표현, World 로고 사용, 운 기반 게임, 토큰 pre-sale
 - **git push 임의 실행 금지** - 반드시 사용자 승인 후 push
 
+## i18n
+- 관리 대상 locale: **ko, en** 만 (나머지 locale 파일은 수정하지 않음)
+- 위치: `src/locales/{ko,en}.json`
+
 ## 개발 환경 테스트
 
 World MiniApp은 World App 내부에서 실행됨. localhost 직접 접근 불가.
@@ -56,7 +60,7 @@ Preview URL을 Developer Portal에 등록
 
 - **버전**: v0.0.3.1
 - **기능**: Browser Wallet Bridge
-- **상태**: Step 5 완료 → Step 6 대기
+- **상태**: Step 6 완료 → 아카이브 대기
 - **문서**: [docs/phases/v0.0.3.1-browser-wallet-bridge/](docs/phases/v0.0.3.1-browser-wallet-bridge/)
 - **시작일**: 2026-02-06
 

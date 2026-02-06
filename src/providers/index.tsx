@@ -10,13 +10,9 @@ import { ErrorBoundary, OfflineScreen } from '@/shared/components/states'
 import { useOffline } from '@/shared/hooks'
 
 import en from '@/locales/en.json'
-import es from '@/locales/es.json'
-import th from '@/locales/th.json'
-import ja from '@/locales/ja.json'
 import ko from '@/locales/ko.json'
-import pt from '@/locales/pt.json'
 
-const messages = { en, es, th, ja, ko, pt } as const
+const messages = { en, ko } as const
 
 export function RootProviders({ children }: { children: ReactNode }) {
   const language = useSettingsStore((s) => s.language)
