@@ -1,0 +1,10 @@
+project_id = "world-gate"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public", "gate"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+port = 54322
