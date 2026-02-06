@@ -15,6 +15,7 @@ export function TabNavigation() {
   const tabs = useMemo(
     () => [
       { href: '/home', label: t('home'), icon: '🏠' },
+      { href: '/wallet', label: t('wallet'), icon: '👛' },
       { href: '/settings', label: t('settings'), icon: '⚙️' },
     ],
     [t]

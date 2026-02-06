@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl'
 import { VerifyButton } from '@/domains/human/client'
-import { WalletBindingButton, WalletList } from '@/domains/wallet/client'
 
 export default function HomePage() {
   const t = useTranslations('home')
@@ -14,8 +13,6 @@ export default function HomePage() {
         <p className="text-gray-600">{t('description')}</p>
       </div>
       <VerifyButton />
-      <WalletList />
-      <WalletBindingButton />
     </div>
   )
 }
