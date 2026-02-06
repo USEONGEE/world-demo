@@ -8,6 +8,7 @@
   "tabs": {
     "home": "홈",
     "wallet": "지갑",
+    "bridge": "브릿지",
     "settings": "설정"
   },
   "consent": {
