@@ -19,7 +19,6 @@
 - Rate limit 또는 간단한 abuse 방지 로직
 - 에러 코드/메시지 일관화
 - 데이터 보존 정책 문서화(PII 미저장 명시)
-- DB 마이그레이션 문서 최신화(`/docs/phases/DB-MIGRATIONS.md`)
 
 ## 보안/정책
 - World 로고 사용 금지
@@ -129,5 +128,4 @@
 - `/docs/World-Chain-Guide.md` - 정책 준수 체크리스트
 - `CLAUDE.md` - 프로젝트 필수/금지 규칙
 - `/docs/phases/ENV.md` - 환경변수 통합 문서
-- `/docs/phases/DB-MIGRATIONS.md` - DB 마이그레이션 SQL 문서
 - `/docs/phases/ARCHITECTURE.md` - FE/BE 경계 및 구조
