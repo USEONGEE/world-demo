@@ -17,6 +17,17 @@ export type SiweChallenge = {
   used: boolean
 }
 
+export type WalletAuthPayload = {
+  message: string
+  signature: string
+}
+
+export type WalletAuthResult = {
+  address: string
+  payload: WalletAuthPayload | null
+  nonce: string | null
+}
+
 // Client state for wallet binding
 export type WalletBindingStatus = 'idle' | 'loading' | 'signing' | 'verifying' | 'success' | 'error'
 
@@ -25,7 +36,9 @@ export interface WalletState {
   isLoading: boolean
   error: string | null
   status: WalletBindingStatus
-  fetchWallets: () => Promise<void>
+  fetchWallets: () => Promise<WalletBinding[]>
+  requestWalletAuth: (options?: { force?: boolean }) => Promise<WalletAuthResult>
+  verifyWalletAuth: (auth: WalletAuthResult) => Promise<void>
   bindWallet: () => Promise<void>
   reset: () => void
 }

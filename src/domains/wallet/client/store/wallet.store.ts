@@ -3,7 +3,7 @@
 import { create } from 'zustand'
 import { MiniKit, type WalletAuthInput } from '@worldcoin/minikit-js'
 import { analytics } from '@/core/analytics'
-import type { WalletBinding, WalletState, WalletBindingStatus } from '../../types'
+import type { WalletAuthResult, WalletBinding, WalletState, WalletBindingStatus } from '../../types'
 import type { SiweChallengeResponse, SiweVerifyResponse, WalletsResponse } from '@/shared/contracts'
 
 // Timeout for API calls (10 seconds)
@@ -20,6 +20,18 @@ function extractAddressFromMessage(message: string): string | null {
 
 interface WalletStore extends WalletState {}
 
+type WalletAuthPayload = {
+  message: string
+  signature: string
+}
+
+type WalletAuthContext = {
+  payload: WalletAuthPayload
+  nonce: string
+  address: string
+  challengeAddress: string
+}
+
 export const useWalletStore = create<WalletStore>()((set, get) => ({
   wallets: [],
   isLoading: false,
@@ -28,7 +40,7 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
 
   fetchWallets: async () => {
     const state = get()
-    if (state.isLoading) return
+    if (state.isLoading) return state.wallets
 
     set({ isLoading: true, error: null })
 
@@ -52,6 +64,7 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         isLoading: false,
         error: null,
       })
+      return data.wallets as WalletBinding[]
     } catch (error) {
       const errorMessage =
         error instanceof Error && error.name === 'AbortError'
@@ -65,11 +78,25 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         error: errorMessage,
       })
     }
+    return []
   },
 
-  bindWallet: async () => {
+  requestWalletAuth: async (options) => {
     const state = get()
-    if (state.isLoading) return
+    const forceAuth = options?.force ?? false
+
+    const walletAddress = MiniKit.user?.walletAddress
+    if (walletAddress && !forceAuth) {
+      return {
+        address: walletAddress,
+        payload: null,
+        nonce: null,
+      } satisfies WalletAuthResult
+    }
+
+    if (state.isLoading) {
+      throw new Error('Wallet auth already in progress')
+    }
 
     set({ isLoading: true, error: null, status: 'loading' })
 
@@ -79,11 +106,8 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         throw new Error('MiniKit is not installed')
       }
 
-      // Get wallet address from MiniKit user (may be unavailable until Wallet Auth runs)
-      const walletAddress = MiniKit.user?.walletAddress
-      const challengeAddress = walletAddress ?? FALLBACK_ADDRESS
-
       // 2. Request challenge
+      const challengeAddress = walletAddress ?? FALLBACK_ADDRESS
       const challengeController = new AbortController()
       const challengeTimeout = setTimeout(() => challengeController.abort(), API_TIMEOUT)
 
@@ -118,7 +142,6 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
 
       const { finalPayload } = await MiniKit.commandsAsync.walletAuth(walletAuthPayload)
 
-      // Check if signing was successful
       if (finalPayload.status !== 'success') {
         analytics.track({
           name: 'siwe_sign_fail',
@@ -137,9 +160,41 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         timestamp: new Date(),
       })
 
-      // 4. Verify signature
-      set({ status: 'verifying' })
+      return {
+        payload: {
+          message: finalPayload.message,
+          signature: finalPayload.signature,
+        },
+        nonce: challenge.nonce,
+        address: resolvedAddress,
+        challengeAddress,
+      } satisfies WalletAuthContext
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error && error.name === 'AbortError'
+          ? 'Request timeout'
+          : error instanceof Error
+            ? error.message
+            : 'Unknown error'
 
+      set({
+        isLoading: false,
+        error: errorMessage,
+        status: 'error',
+      })
+
+      throw new Error(errorMessage)
+    }
+  },
+
+  verifyWalletAuth: async (auth) => {
+    if (!auth.payload || !auth.nonce) {
+      throw new Error('Wallet auth required')
+    }
+
+    set({ status: 'verifying' })
+
+    try {
       const verifyController = new AbortController()
       const verifyTimeout = setTimeout(() => verifyController.abort(), API_TIMEOUT)
 
@@ -147,11 +202,8 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          payload: {
-            message: finalPayload.message,
-            signature: finalPayload.signature,
-          },
-          nonce: challenge.nonce,
+          payload: auth.payload,
+          nonce: auth.nonce,
         }),
         signal: verifyController.signal,
       }).finally(() => clearTimeout(verifyTimeout))
@@ -163,7 +215,7 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
 
         analytics.track({
           name: 'wallet_bind_fail',
-          properties: { reason: errorCode ?? errorMessage, address: walletAddress ?? challengeAddress },
+          properties: { reason: errorCode ?? errorMessage, address: auth.address },
           timestamp: new Date(),
         })
 
@@ -181,7 +233,6 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
         timestamp: new Date(),
       })
 
-      // 5. Refresh wallet list
       await get().fetchWallets()
 
       set({
@@ -196,6 +247,29 @@ export const useWalletStore = create<WalletStore>()((set, get) => ({
           : error instanceof Error
             ? error.message
             : 'Unknown error'
+
+      set({
+        isLoading: false,
+        error: errorMessage,
+        status: 'error',
+      })
+    }
+  },
+
+  bindWallet: async () => {
+    const state = get()
+    if (state.isLoading) return
+
+    try {
+      const auth = await get().requestWalletAuth({ force: true })
+      await get().verifyWalletAuth(auth)
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error && error.name === 'AbortError'
+          ? 'Request timeout'
+        : error instanceof Error
+          ? error.message
+          : 'Unknown error'
 
       set({
         isLoading: false,
