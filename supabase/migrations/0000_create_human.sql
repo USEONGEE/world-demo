@@ -1,7 +1,9 @@
 -- Phase v0.0.2: Human table
 create extension if not exists "pgcrypto";
 
-create table if not exists human (
+create schema if not exists gate;
+
+create table if not exists gate.human (
   id uuid primary key default gen_random_uuid(),
   action text not null,
   nullifier_hash text not null,
@@ -9,4 +11,4 @@ create table if not exists human (
 );
 
 create unique index if not exists human_action_nullifier_hash_key
-  on human (action, nullifier_hash);
+  on gate.human (action, nullifier_hash);
