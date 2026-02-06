@@ -35,6 +35,10 @@ PRD 대비 누락된 것은 WalletList.tsx의 기능 강화와 i18n 키 추가.
 ### 접근법
 기존 WalletList.tsx를 강화하여 누락된 기능을 추가한다. BE 코드, Store, Hook, API Route는 변경 불필요.
 
+### 보완 사항 (MiniKit Wallet Auth)
+- `MiniKit.user.walletAddress`가 없는 경우에도 Wallet Auth 팝업을 실행해야 함
+- challenge 요청은 임시 주소로 진행 후, 서명 메시지에서 실제 주소를 파싱
+
 ### 대안 검토
 
 | 방식 | 장점 | 단점 | 선택 |

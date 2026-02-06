@@ -29,6 +29,7 @@
 - [ ] `GET /api/wallet/bindings` API가 세션 기반으로 지갑 목록을 반환함
 - [ ] 세션 없는 요청에 401 응답
 - [ ] i18n 지원 (ko, en)
+- [ ] MiniKit 지갑 주소가 없어도 Wallet Auth 팝업이 정상적으로 표시됨
 
 ## 제약사항
 - 지갑 삭제/해제는 비범위

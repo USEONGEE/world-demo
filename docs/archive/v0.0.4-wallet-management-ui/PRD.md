@@ -26,6 +26,9 @@
 - 상태(verified) 표시
 - 세션 없음은 SessionGuard가 /home으로 리다이렉트
 - 실패/빈 상태 UI
+- MiniKit 지갑 주소가 없는 경우에도 Wallet Auth 팝업을 띄울 수 있어야 함
+  - challenge 요청 시 임시 주소 사용
+  - 서명 메시지에서 실제 주소를 파싱해 사용
 
 ### BE
 - GET /api/wallet/bindings
