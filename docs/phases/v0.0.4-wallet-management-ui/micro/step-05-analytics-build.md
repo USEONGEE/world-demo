@@ -17,12 +17,12 @@
 - [ ] Scope 탐색 필요
 
 ## 3. 완료 조건
-- [ ] WalletList 마운트 + wallets 로드 완료 시 `wallet_list_view` 이벤트 1회 발생
-- [ ] `wallet_list_view` 이벤트 properties에 `{ count: wallets.length }` 포함
-- [ ] 주소 복사 시 `wallet_copy` 이벤트 발생
-- [ ] `wallet_copy` 이벤트 properties에 `{ address }` 포함
-- [ ] `npx tsc --noEmit` 타입 체크 통과
-- [ ] `pnpm build` 프로덕션 빌드 성공
+- [x] WalletList 마운트 + wallets 로드 완료 시 `wallet_list_view` 이벤트 1회 발생
+- [x] `wallet_list_view` 이벤트 properties에 `{ count: wallets.length }` 포함
+- [x] 주소 복사 시 `wallet_copy` 이벤트 발생
+- [x] `wallet_copy` 이벤트 properties에 `{ address }` 포함
+- [x] `npx tsc --noEmit` 타입 체크 통과
+- [x] `pnpm build` 프로덕션 빌드 성공
 
 ---
 

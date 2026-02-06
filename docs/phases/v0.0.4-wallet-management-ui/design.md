@@ -27,6 +27,8 @@ PRD 대비 누락된 것은 WalletList.tsx의 기능 강화와 i18n 키 추가.
 | 빈 상태 안내 텍스트 강화 | 약함 (텍스트만, 유도 없음) |
 | 분석 이벤트 (wallet_list_view, wallet_copy) | 없음 |
 | i18n 키 (copy, verified, fetch_error 등) | 없음 |
+| 섹션 간격 32px | 현재 `/wallet`은 `space-y-6` (24px) |
+| 401 응답 스키마 | PRD 예시와 실제 응답에 `timestamp`, `requestId` 차이 |
 
 ## 해결 방식
 

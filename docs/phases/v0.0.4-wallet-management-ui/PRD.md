@@ -54,7 +54,11 @@
 
 **401 Unauthorized**
 ```json
-{ "error": { "code": "UNAUTHORIZED", "message": "Session required" } }
+{
+  "error": { "code": "UNAUTHORIZED", "message": "Session required" },
+  "timestamp": "2026-02-06T12:34:56Z",
+  "requestId": "uuid"
+}
 ```
 
 ## 비기능/UX

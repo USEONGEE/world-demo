@@ -15,10 +15,10 @@
 - [ ] Scope 탐색 필요
 
 ## 3. 완료 조건
-- [ ] ko.json의 wallet 섹션에 `copy_address`, `copied`, `verified`, `fetch_error` 키가 존재
-- [ ] en.json의 wallet 섹션에 동일 4개 키가 존재
-- [ ] 기존 키가 변경/삭제되지 않음
-- [ ] JSON 파싱 에러 없음 (`pnpm build` 또는 JSON.parse로 확인)
+- [x] ko.json의 wallet 섹션에 `copy_address`, `copied`, `verified`, `fetch_error` 키가 존재
+- [x] en.json의 wallet 섹션에 동일 4개 키가 존재
+- [x] 기존 키가 변경/삭제되지 않음
+- [x] JSON 파싱 에러 없음 (`pnpm build` 또는 JSON.parse로 확인)
 
 ---
 

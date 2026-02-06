@@ -16,10 +16,10 @@
 - [ ] Scope 탐색 필요
 
 ## 3. 완료 조건
-- [ ] 각 지갑 카드에 "Verified · SIWE" 형태의 배지가 표시됨 (초록색 계열)
-- [ ] `verification_method` 필드 값이 배지에 반영됨
-- [ ] 빈 상태에서 `t('no_wallets')` + `t('description')` 텍스트가 표시됨
-- [ ] i18n 키 `verified`가 배지 텍스트에 사용됨
+- [x] 각 지갑 카드에 "Verified · SIWE" 형태의 배지가 표시됨 (초록색 계열)
+- [x] `verification_method` 필드 값이 배지에 반영됨
+- [x] 빈 상태에서 `t('no_wallets')` + `t('description')` 텍스트가 표시됨
+- [x] i18n 키 `verified`가 배지 텍스트에 사용됨
 
 ---
 

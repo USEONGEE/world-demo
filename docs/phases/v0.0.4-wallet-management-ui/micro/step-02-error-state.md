@@ -16,10 +16,10 @@
 - [ ] Scope 탐색 필요
 
 ## 3. 완료 조건
-- [ ] WalletList에서 `error` 상태일 때 에러 카드(bg-red-50) 표시됨
-- [ ] 에러 메시지 텍스트가 `t('fetch_error')` i18n 키 사용
-- [ ] 재시도 버튼 클릭 시 `fetchWallets()` 호출
-- [ ] 에러 상태에서 재시도 성공 시 정상 목록으로 전환
+- [x] WalletList에서 `error` 상태일 때 에러 카드(bg-red-50) 표시됨
+- [x] 에러 메시지 텍스트가 `t('fetch_error')` i18n 키 사용
+- [x] 재시도 버튼 클릭 시 `fetchWallets()` 호출
+- [x] 에러 상태에서 재시도 성공 시 정상 목록으로 전환
 
 ---
 
