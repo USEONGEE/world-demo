@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { MiniKit } from '@worldcoin/minikit-js'
+import { MiniKit, VerificationLevel } from '@worldcoin/minikit-js'
 import { analytics } from '@/core/analytics'
 import type { HumanState, VerifyStatus } from '../../types'
 import type { VerifyResponse, HumanMeResponse } from '@/shared/contracts'
@@ -48,6 +48,7 @@ export const useHumanStore = create<HumanStore>()(
           // Call MiniKit verify command with timeout
           const verifyPromise = MiniKit.commandsAsync.verify({
             action: VERIFY_ACTION,
+            verification_level: VerificationLevel.Device,
           })
 
           const timeoutPromise = new Promise<never>((_, reject) =>
@@ -79,10 +80,16 @@ export const useHumanStore = create<HumanStore>()(
           const controller = new AbortController()
           const apiTimeout = setTimeout(() => controller.abort(), VERIFY_API_TIMEOUT)
 
+          // Ensure action is always present (MiniKit payload may omit it)
+          const requestPayload = {
+            ...payload,
+            action: VERIFY_ACTION,
+          }
+
           const response = await fetch('/api/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(requestPayload),
             signal: controller.signal,
           }).finally(() => clearTimeout(apiTimeout))
 
