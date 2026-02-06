@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { createWalletClient, custom, type EIP1193Provider } from 'viem'
 import { mainnet } from 'viem/chains'
 import { SiweMessage } from 'siwe'
@@ -9,6 +9,11 @@ import type { SiweChallengeResponse, SiweVerifyResponse } from '@/shared/contrac
 
 type BrowserWalletStatus = 'idle' | 'connecting' | 'signing' | 'verifying' | 'success' | 'error'
 
+type Eip1193WithEvents = EIP1193Provider & {
+  on?: (event: string, listener: (...args: unknown[]) => void) => void
+  removeListener?: (event: string, listener: (...args: unknown[]) => void) => void
+}
+
 function getEthereum(): EIP1193Provider | undefined {
   if (typeof window === 'undefined') return undefined
   return (window as unknown as { ethereum?: EIP1193Provider }).ethereum
@@ -16,10 +21,69 @@ function getEthereum(): EIP1193Provider | undefined {
 
 export function useBrowserWallet() {
   const [address, setAddress] = useState<string | null>(null)
+  const [isBound, setIsBound] = useState<boolean | null>(null)
+  const [isChecking, setIsChecking] = useState(false)
   const [status, setStatus] = useState<BrowserWalletStatus>('idle')
   const [error, setError] = useState<string | null>(null)
 
   const hasEthereum = !!getEthereum()
+
+  const refreshAddress = useCallback(async (request = false) => {
+    const ethereum = getEthereum()
+    if (!ethereum || !('request' in ethereum)) return null
+    const method = request ? 'eth_requestAccounts' : 'eth_accounts'
+    const accounts = (await ethereum.request({
+      method,
+    })) as string[] | undefined
+    const nextAddress = accounts?.[0] ?? null
+    setAddress(nextAddress)
+    return nextAddress
+  }, [])
+
+  const refreshBindingStatus = useCallback(
+    async (targetAddress?: string | null) => {
+      const candidate = targetAddress ?? address
+      if (!candidate) {
+        setIsBound(false)
+        return
+      }
+      setIsChecking(true)
+      try {
+        const response = await fetch('/api/wallet/bindings')
+        if (!response.ok) {
+          setIsBound(null)
+          return
+        }
+        const data = await response.json()
+        const bound = Array.isArray(data.wallets)
+          && data.wallets.some(
+            (wallet: { address?: string }) =>
+              wallet.address?.toLowerCase() === candidate.toLowerCase()
+          )
+        setIsBound(bound)
+      } catch {
+        setIsBound(null)
+      } finally {
+        setIsChecking(false)
+      }
+    },
+    [address]
+  )
+
+  const connectWallet = useCallback(async () => {
+    setStatus('connecting')
+    setError(null)
+    try {
+      const nextAddress = await refreshAddress(true)
+      if (nextAddress) {
+        await refreshBindingStatus(nextAddress)
+      }
+      setStatus('idle')
+    } catch (err) {
+      setStatus('error')
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    }
+  }, [refreshAddress, refreshBindingStatus])
 
   const connectAndBind = useCallback(async () => {
     const ethereum = getEthereum()
@@ -115,6 +179,7 @@ export function useBrowserWallet() {
         timestamp: new Date(),
       })
       setAddress(result.address)
+      setIsBound(true)
       setStatus('success')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
@@ -135,16 +200,55 @@ export function useBrowserWallet() {
 
   const reset = useCallback(() => {
     setAddress(null)
+    setIsBound(null)
+    setIsChecking(false)
     setStatus('idle')
     setError(null)
   }, [])
 
+  useEffect(() => {
+    if (!hasEthereum) return
+    const ethereum = getEthereum() as Eip1193WithEvents | undefined
+    if (!ethereum) return
+    let isMounted = true
+
+    async function init() {
+      const current = await refreshAddress(false)
+      if (!isMounted) return
+      if (current) {
+        await refreshBindingStatus(current)
+      }
+    }
+
+    init()
+
+    const handleAccountsChanged = (accounts: unknown) => {
+      const list = Array.isArray(accounts) ? (accounts as string[]) : []
+      const next = list[0] ?? null
+      setAddress(next)
+      setIsBound(null)
+      if (next) {
+        refreshBindingStatus(next)
+      }
+    }
+
+    ethereum.on?.('accountsChanged', handleAccountsChanged)
+    return () => {
+      isMounted = false
+      ethereum.removeListener?.('accountsChanged', handleAccountsChanged)
+    }
+  }, [hasEthereum, refreshAddress, refreshBindingStatus])
+
   return {
     address,
+    isBound,
+    isChecking,
     status,
     error,
     hasEthereum,
+    connectWallet,
     connectAndBind,
+    refreshBindingStatus,
     reset,
   }
 }

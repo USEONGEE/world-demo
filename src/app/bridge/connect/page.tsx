@@ -4,10 +4,21 @@ import { useTranslations } from 'next-intl'
 import { Button } from '@/shared/components/ui/Button'
 import { Card } from '@/shared/components/ui/Card'
 import { useBrowserWallet } from '@/domains/bridge/client/hooks/useBrowserWallet'
+import { cn } from '@/shared/utils'
 
 export default function BridgeConnectPage() {
   const t = useTranslations('bridge')
-  const { address, status, error, hasEthereum, connectAndBind, reset } = useBrowserWallet()
+  const {
+    address,
+    isBound,
+    isChecking,
+    status,
+    error,
+    hasEthereum,
+    connectWallet,
+    connectAndBind,
+    reset,
+  } = useBrowserWallet()
 
   // MetaMask not installed
   if (!hasEthereum) {
@@ -26,52 +37,6 @@ export default function BridgeConnectPage() {
     )
   }
 
-  // Success state
-  if (status === 'success' && address) {
-    return (
-      <Card className="bg-green-50 border-green-200">
-        <div className="space-y-3 text-center">
-          <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-            <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h2 className="font-bold text-green-800">{t('bind_success_title')}</h2>
-          <p className="text-sm text-green-600 font-mono break-all">{address}</p>
-          <p className="text-sm text-green-600">{t('bind_success_message')}</p>
-        </div>
-      </Card>
-    )
-  }
-
-  // Error state
-  if (status === 'error' && error) {
-    return (
-      <Card className="bg-red-50 border-red-200">
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-              <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <div>
-              <p className="font-medium text-red-800">{t('bind_error')}</p>
-              <p className="text-sm text-red-600">{error}</p>
-            </div>
-          </div>
-          <Button
-            onClick={() => { reset(); connectAndBind() }}
-            variant="secondary"
-            className="w-full"
-          >
-            {t('retry')}
-          </Button>
-        </div>
-      </Card>
-    )
-  }
-
   // Get loading text
   const getStatusText = () => {
     switch (status) {
@@ -82,25 +47,80 @@ export default function BridgeConnectPage() {
       case 'verifying':
         return t('verifying_signature')
       default:
-        return t('connect_wallet_button')
+        return t('bind_wallet_button')
     }
   }
 
   const isLoading = status === 'connecting' || status === 'signing' || status === 'verifying'
 
-  // Default: Connect wallet button
+  if (!address) {
+    return (
+      <Card>
+        <div className="space-y-4">
+          <div className="text-center">
+            <h1 className="text-xl font-bold mb-2">{t('connect_wallet_title')}</h1>
+            <p className="text-gray-600 text-sm">{t('connect_wallet_description')}</p>
+          </div>
+
+          {status === 'error' && error && (
+            <p className="text-sm text-red-500 text-center">{error}</p>
+          )}
+
+          <Button
+            onClick={() => { reset(); connectWallet() }}
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                {getStatusText()}
+              </span>
+            ) : (
+              t('connect_wallet_button')
+            )}
+          </Button>
+        </div>
+      </Card>
+    )
+  }
+
+  const statusLabel = isChecking
+    ? t('wallet_checking')
+    : isBound
+      ? t('wallet_bound')
+      : t('wallet_unbound')
+
+  const statusClass = isChecking
+    ? 'text-gray-500'
+    : isBound
+      ? 'text-green-600'
+      : 'text-yellow-700'
+
   return (
     <Card>
       <div className="space-y-4">
         <div className="text-center">
-          <h1 className="text-xl font-bold mb-2">{t('connect_wallet_title')}</h1>
-          <p className="text-gray-600 text-sm">{t('connect_wallet_description')}</p>
+          <h1 className="text-xl font-bold mb-2">{t('wallet_detected_title')}</h1>
+          <p className="text-gray-600 text-sm">{t('wallet_detected_message')}</p>
         </div>
 
+        <div className="rounded-lg border border-gray-200 px-4 py-3 text-center">
+          <p className="font-mono text-sm break-all">{address}</p>
+          <p className={cn('text-xs mt-2', statusClass)}>{statusLabel}</p>
+        </div>
+
+        {status === 'error' && error && (
+          <p className="text-sm text-red-500 text-center">{error}</p>
+        )}
+
         <Button
-          onClick={connectAndBind}
+          onClick={() => { reset(); connectAndBind() }}
           className="w-full"
-          disabled={isLoading}
+          disabled={isLoading || isChecking || isBound === true}
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
@@ -111,8 +131,17 @@ export default function BridgeConnectPage() {
               {getStatusText()}
             </span>
           ) : (
-            getStatusText()
+            t('bind_wallet_button')
           )}
+        </Button>
+
+        <Button
+          onClick={() => { reset(); connectWallet() }}
+          variant="secondary"
+          className="w-full"
+          disabled={isLoading}
+        >
+          {t('switch_wallet_button')}
         </Button>
       </div>
     </Card>
