@@ -7,6 +7,7 @@
   },
   "tabs": {
     "home": "Home",
+    "wallet": "Wallet",
     "settings": "Settings"
   },
   "consent": {
@@ -61,5 +62,37 @@
     "no_wallets": "No wallets connected yet",
     "connected_wallets": "Connected Wallets",
     "verified_on": "Verified on"
+  },
+  "bridge": {
+    "issue_button": "Connect Wallet via Browser",
+    "issue_description": "Generate a code to connect your browser wallet",
+    "issuing": "Generating code...",
+    "code_label": "Bridge Code",
+    "expires_in": "Expires in {time}",
+    "expired": "Code expired",
+    "reissue": "Generate New Code",
+    "error": "Error",
+    "retry": "Try Again",
+    "minikit_required": "Please open this app in World App",
+    "enter_code_title": "Enter Bridge Code",
+    "enter_code_description": "Enter the 8-character code from your World App",
+    "submit_code": "Submit",
+    "verifying_code": "Verifying...",
+    "error_not_found": "Invalid code",
+    "error_expired": "Code has expired",
+    "error_already_used": "Code has already been used",
+    "error_rate_limited": "Too many attempts. Try again later",
+    "error_unknown": "An error occurred",
+    "connect_wallet_title": "Connect Wallet",
+    "connect_wallet_description": "Connect your browser wallet to link it with your verified identity",
+    "connect_wallet_button": "Connect MetaMask",
+    "connecting_wallet": "Connecting...",
+    "signing_message": "Sign the message...",
+    "verifying_signature": "Verifying...",
+    "no_wallet_title": "Wallet Not Found",
+    "no_wallet_description": "Please install MetaMask or another browser wallet extension",
+    "bind_success_title": "Wallet Connected",
+    "bind_success_message": "Your wallet has been linked to your verified identity",
+    "bind_error": "Connection Failed"
   }
 }
